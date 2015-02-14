@@ -204,25 +204,72 @@ function weilianxier(array, book)
     return draw
 end
 
-
+function interwetten(array, book, homelow)
+    local res = 1
+    point = array['Interwetten']
+    if point.Start.draw > book.Start.draw then
+        print('Interwetten平赔高于平均，排除平局')
+    end   
+end
 
 
 function libo(array, book, homelow)
     local res = 1
     point = array['立博']
     if homelow == 1 then
+        if book.Start.home < book.End.home then
+            --print('胜赔提升，警惕负赔冷出')
+        end
         if point.Start.home > book.Start.home then
             res = 0
             return res
         end
     else
-         if point.Start.away > book.Start.away then
+        if book.Start.away < book.End.away then
+            --print('负赔提升，警惕胜赔冷出')
+        end        
+        if point.Start.away > book.Start.away then
             res = 0
             return res
         end       
     end
 
     return res
+end
+
+function coral(array, book, homelow)
+    local lowest = 1
+    for k,v in pairs(companys) do
+        if array['Coral'].Start.away > array[v.text].Start.away then
+            lowest = 0
+            break
+        end
+    end    
+    if lowest == 1 then
+        print('Coral初赔负赔最低，关注赔率')
+    end 
+
+    local lowest = 1
+    for k,v in pairs(companys) do
+        if array['Coral'].Start.draw > array[v.text].Start.draw then
+            lowest = 0
+            break
+        end
+    end    
+    if lowest == 1 then
+        print('Coral初赔平赔最低，关注赔率')
+    end   
+
+    local lowest = 1
+    for k,v in pairs(companys) do
+        if array['Coral'].Start.home > array[v.text].Start.draw then
+            lowest = 0
+            break
+        end
+    end    
+    if lowest == 1 then
+        print('Coral初赔胜赔最低，关注赔率')
+    end   
 end
 
 function botiantang(array, book, homelow)
@@ -320,11 +367,20 @@ function botiantang(array, book, homelow)
     end   
 end
 
+function home(array, book, homelow)
+    for k,v in pairs(companys) do    
+        if array[v.text].Start.home > book.Start.home then
+            print(v.text)
+        end           
+    end
+end
 win=1
 draw=1
 lose=1
 homelow=1
 print(book.Start.home, book.Start.draw, book.Start.away)
+interwetten(array, book, homelow)
+--coral(array, drawArray, drawBook)
 if (book.Start.home > book.Start.away and book.End.home < book.End.away) or 
     (book.Start.home < book.Start.away and book.End.home > book.End.away)then
     print("摇摆盘谨慎双选")
@@ -381,10 +437,10 @@ if array['威廉希尔'].Start.draw < array['澳门彩票'].Start.draw then
 
     if homelow == 1 then
         lose = botiantang(array, book, homelow)
-        win = libo(array, book, homelow)
+        --win = libo(array, book, homelow)
     else
         win = botiantang(array, book, homelow)
-        lose = libo(array, book, homelow)
+        --lose = libo(array, book, homelow)
     end     
 else
     draw = weilianxier(array, book)
@@ -399,10 +455,10 @@ else
 
     if homelow == 1 then
         lose = botiantang(array, book, homelow)
-        win = libo(array, book, homelow)
+        --win = libo(array, book, homelow)
     else
         win = botiantang(array, book, homelow)
-        lose = libo(array, book, homelow)
+        --lose = libo(array, book, homelow)
     end 
 end   
 

@@ -19,15 +19,12 @@ end
 
 local _, _, _, body = http.get(url)
 
+aend=0;
+hend=0;
 for data in string.gmatch(body, "onClick=\"_gaq\.push[^=]+href=\"([^\"']+odds/)\"") do
+    _, hend, htitle  = string.find(body, "data%-hname=\"([^\"']+)\"", hend+1)  
+    _, aend, atitle = string.find(body, "data%-aname=\"([^\"']+)\"", aend+1)
+    print(htitle, atitle)
 	print("http://www.okooo.com"..data)
 end
---j = 0
--- while true do
-	
--- 	i, j, data = string.find(body, "onClick=\"_gaq\.push[^=]+href=\"([^\"']+odds)/\"", j+1)
--- 	print(i, j, data)	
--- 	if j == nil then
--- 		break
--- 	end
--- end
+
