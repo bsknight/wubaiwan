@@ -189,18 +189,24 @@ function draw5companys(array, drawArray, drawBook)
 end
 
 function weilianxier(array, book)
-    draw = 0
+    draw = 1
+	lowest = 1
     for k,v in pairs(companys) do 
         if book.End.draw > book.Start.draw then     
             if array[v.text].End.draw < array[v.text].Start.draw then
                 --print('平局提升模式匹配失败，保留平局')
                 draw = 1
-                return draw
-            end
-        else
-            return 1
-        end
-    end
+            else
+				draw = 0
+			end
+		end
+        if array['威廉希尔'].Start.draw > array[v.text].Start.draw then
+    		lowest = 0
+		end
+	end
+	if lowest == 1 then
+		print('威廉希尔初赔平赔最低，警惕冷门')
+	end
     return draw
 end
 
