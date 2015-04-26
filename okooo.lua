@@ -28,6 +28,7 @@ function get_draw()
                     {code='Fortuna', text='Fortuna'},
                     {code='\u9999\u6e2f\u9a6c\u4f1a', text='香港马会'},                     
                     {code='Wettpunkt', text='Wettpunkt'}, 
+                    {code='\u7ade\u5f69\u5b98\u65b9', text='竞彩官方'}, 
                 }  
 
     local _, _, _, body = http.get(url_all)             
@@ -384,7 +385,12 @@ win=1
 draw=1
 lose=1
 homelow=1
+print('欧赔初盘')
 print(book.Start.home, book.Start.draw, book.Start.away)
+print('欧赔终盘')
+print(book.End.home, book.End.draw, book.End.away)
+print('竞彩官方')
+print(drawArray['竞彩官方'].End.home,drawArray['竞彩官方'].End.draw,drawArray['竞彩官方'].End.away)
 interwetten(array, book, homelow)
 --coral(array, drawArray, drawBook)
 if (book.Start.home > book.Start.away and book.End.home < book.End.away) or 
