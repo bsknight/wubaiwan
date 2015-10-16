@@ -1,7 +1,40 @@
 <?php
 $debug=0;
 $debugnum='522025';
-function model1($param, $odd, $unfinish)
+
+function cal_yazhi($param, $type)
+{
+		$url = "http://m.500.com/info/index.php?c=detail&a=yazhiAjax&r=1&fid=".$param['num'];
+		$tmp = curl_get_contents($url);
+		$tmp = json_decode($tmp,true);
+		$rang = 0;
+		
+		if($type == "homelow")
+		{
+				$pankou = array("半球/一球","一球","一球/球半","球半","球半/两球","两球");
+				$rangqiu = array("半球/一球"=>0.75,"一球"=>1,"一球/球半"=>1.25,"球半"=>1.5,"球半/两球"=>1.75,"两球"=>2);
+		}
+		elseif($type == "awaylow")
+		{
+				$pankou = array("受半球/一球","受一球","受一球/球半","受球半","受球半/两球","受两球");
+				$rangqiu = array("受半球/一球"=>0.75,"受一球"=>1,"受一球/球半"=>1.25,"受球半"=>1.5,"受球半/两球"=>1.75,"受两球"=>2);
+		}
+		foreach($tmp['list'] as $m)
+		{
+			if($m['name'] == '伟德')
+			{
+				//var_dump($m['last']['handi']);
+				if(in_array($m['last']['handi'], $pankou))
+				{
+					$rang = $rangqiu[$m['last']['handi']]+0.25;
+				}
+				return $rang;
+			}
+		}
+		return 0;
+}
+
+function model1(&$param, $odd, $unfinish)
 {
 		global $debug;
 		global $debugnum;
@@ -82,15 +115,21 @@ function model1($param, $odd, $unfinish)
 								$all['Interwetten']['end']['draw'] > $all['Interwetten']['first']['draw'] 
 										)
 										{
+												$rang = cal_yazhi($param, $type);
+												$param['rang'] = $rang;
+												if($rang < 1)
+												{
+													return 2;
+												}
 												if($unfinish)
 												{
 														echo 'model1:'.$param['num']."\n";
 												}
-												elseif($score[0] > $score[1])	// home win
+												elseif($score[0] > $score[1]+$rang)	// home win
 												{
 														return 0;
 												}
-												else
+												elseif($score[0] < $score[1]+$rang)
 												{
 														return 1;
 												}
@@ -124,15 +163,21 @@ function model1($param, $odd, $unfinish)
 								$all['Interwetten']['end']['draw'] > $all['Interwetten']['first']['draw'] 
 										)
 										{
+												$rang = cal_yazhi($param, $type);
+												$param['rang'] = $rang;
+												if($rang < 1)
+												{
+													return 2;
+												}
 												if($unfinish)
 												{
 														echo 'model1:'.$param['num']."\n";
 												}
-												elseif($score[1] > $score[0])// away win
+												elseif($score[1] > $score[0]+$rang)// away win
 												{
 														return 0;
 												}
-												else
+												elseif($score[1] < $score[0]+$rang)
 												{
 														return 1;
 												}
@@ -289,7 +334,7 @@ function curl_get_contents($url)
 		return $r;
 }
 
-function Obser($date, &$good_array, &$bad_array, $unfinish)
+function Obser($date, &$good_array, &$bad_array, $unfinish, &$total)
 {
 		global $debug;
 		global $debugnum;
@@ -353,22 +398,30 @@ function Obser($date, &$good_array, &$bad_array, $unfinish)
 				$ret = model1($param, $json['list'], $unfinish);
 				if($ret == 1)
 				{
+						$param['res']='win';
 						$good_array[1][] = $param;
+						$total['model1'][] = $param;
 				}
 				elseif($ret == 0)
 				{
+						$param['res']='lose';
 						$bad_array[1][] = $param;
+						$total['model1'][] = $param;
 				}
 
 				$ret = model2($param, $json['list'], $unfinish);
 				//var_dump($ret);
 				if($ret == 1)
 				{
+						$param['res']='win';
 						$good_array[2][] = $param['num'];
+						$total['model2'][] = $param;
 				}
 				elseif($ret == 0)
 				{
+						$param['res']='lose';
 						$bad_array[2][] = $param['num'];
+						$total['model2'][] = $param;
 				}
 
 		}	
@@ -381,8 +434,9 @@ $end_time = strtotime($end);
 
 $bad_array = array();
 $good_array = array();
+$total = array();
 $unfinish = 0;
-if(time()-$time<60*60*32)
+if(time()-$time<60*60*36)
 {
 		echo "today match\n";
 		$unfinish=1;
@@ -391,7 +445,7 @@ while($time >= $end_time)
 {
 		$ret = date('Y-m-d', $time);
 		var_dump($ret);
-		Obser($ret, $good_array, $bad_array, $unfinish);
+		Obser($ret, $good_array, $bad_array, $unfinish, $total);
 		$time-=60*60*24;
 }
 echo "#####################model1:\n";
@@ -404,4 +458,5 @@ echo "bad\n";
 var_dump($bad_array[2]);
 echo "good\n";
 var_dump($good_array[2]);
-
+echo "total\n";
+var_dump($total);
