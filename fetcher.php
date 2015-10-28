@@ -94,10 +94,10 @@ function model1(&$param, $odd, $unfinish)
 								$avg['end']['draw'] > $avg['first']['draw'] && 
 								$avg['end']['lost'] > $avg['first']['lost'] && 
 
-								$jingcai['end']['win'] <= $jingcai['first']['win'] &&
-								$jingcai['end']['draw'] >= $jingcai['first']['draw'] &&
-								$jingcai['end']['lost'] >= $jingcai['first']['lost'] &&
-
+								//$jingcai['end']['win'] <= $jingcai['first']['win'] &&
+								//$jingcai['end']['draw'] >= $jingcai['first']['draw'] &&
+								//$jingcai['end']['lost'] >= $jingcai['first']['lost'] &&
+								
 								$all['立博']['end']['win'] <= $all['立博']['first']['win'] &&
 								$all['立博']['end']['draw'] >= $all['立博']['first']['draw'] &&
 								$all['立博']['end']['lost'] >= $all['立博']['first']['lost'] &&
@@ -105,7 +105,7 @@ function model1(&$param, $odd, $unfinish)
 								$all['威廉希尔']['end']['win'] <= $all['威廉希尔']['first']['win'] &&
 								$all['威廉希尔']['end']['draw'] >= $all['威廉希尔']['first']['draw'] &&
 								$all['威廉希尔']['end']['lost'] >= $all['威廉希尔']['first']['lost'] &&
-
+								
 								$all['澳门']['end']['win'] <= $all['澳门']['first']['win'] &&
 								$all['澳门']['end']['draw'] >= $all['澳门']['first']['draw'] &&
 								$all['澳门']['end']['lost'] >= $all['澳门']['first']['lost'] &&
@@ -142,10 +142,10 @@ function model1(&$param, $odd, $unfinish)
 								$avg['end']['draw'] >= $avg['first']['draw'] && 
 								$avg['end']['lost'] <= $avg['first']['lost'] && 
 
-								$jingcai['end']['win'] >= $jingcai['first']['win'] &&
-								$jingcai['end']['draw'] >= $jingcai['first']['draw'] &&
-								$jingcai['end']['lost'] <= $jingcai['first']['lost'] &&
-
+								//$jingcai['end']['win'] >= $jingcai['first']['win'] &&
+								//$jingcai['end']['draw'] >= $jingcai['first']['draw'] &&
+								//$jingcai['end']['lost'] <= $jingcai['first']['lost'] &&
+								
 								$all['立博']['end']['win'] >= $all['立博']['first']['win'] &&
 								$all['立博']['end']['draw'] >= $all['立博']['first']['draw'] &&
 								$all['立博']['end']['lost'] <= $all['立博']['first']['lost'] &&
@@ -153,7 +153,7 @@ function model1(&$param, $odd, $unfinish)
 								$all['威廉希尔']['end']['win'] >= $all['威廉希尔']['first']['win'] &&
 								$all['威廉希尔']['end']['draw'] >= $all['威廉希尔']['first']['draw'] &&
 								$all['威廉希尔']['end']['lost'] <= $all['威廉希尔']['first']['lost'] &&
-
+								
 								$all['澳门']['end']['win'] >= $all['澳门']['first']['win'] &&
 								$all['澳门']['end']['draw'] >= $all['澳门']['first']['draw'] &&
 								$all['澳门']['end']['lost'] <= $all['澳门']['first']['lost'] &&
@@ -165,7 +165,7 @@ function model1(&$param, $odd, $unfinish)
 										{
 												$rang = cal_yazhi($param, $type);
 												$param['rang'] = $rang;
-												if($rang < 1)
+												if($rang < 1 && !$unfinish)
 												{
 													return 2;
 												}
@@ -245,9 +245,9 @@ function model2($param, $odd, $unfinish)
 								$avg['end']['win'] > $avg['first']['win'] && 
 								$jingcai['end']['win'] > 2 &&
 								$jingcai['end']['win'] > $jingcai['first']['win'] &&
-								$all['威廉希尔']['first']['draw'] <= $all['澳门']['first']['draw'] &&
+								//$all['威廉希尔']['first']['draw'] <= $all['澳门']['first']['draw'] &&
 								(
-										($
+										(
 										$all['澳门']['end']['draw'] <= $all['澳门']['first']['draw']  &&
 										$all['威廉希尔']['end']['win'] > $all['威廉希尔']['first']['win'] &&
 										$all['威廉希尔']['end']['draw'] <= $all['威廉希尔']['first']['draw'] ) ||
@@ -257,8 +257,8 @@ function model2($param, $odd, $unfinish)
 										$all['澳门']['end']['draw'] <= $all['澳门']['first']['draw'] ) 
 								)&&
 								$all['立博']['end']['draw'] <= $all['立博']['first']['draw']  &&
-								$all['SportingBet (博天堂)']['end']['lost'] <= $all['SportingBet (博天堂)']['first']['lost'] &&
-								$all['Interwetten']['end']['win'] > $all['Interwetten']['first']['win'])
+								$all['SportingBet (博天堂)']['end']['lost'] <= $all['SportingBet (博天堂)']['first']['lost'] )
+								//$all['Interwetten']['end']['win'] > $all['Interwetten']['first']['win'])
 				{
 						if($unfinish)
 						{
@@ -280,7 +280,7 @@ function model2($param, $odd, $unfinish)
 								$avg['end']['lost'] > $avg['first']['lost'] && 
 								$jingcai['end']['lost'] > 2 &&
 								$jingcai['end']['lost'] > $jingcai['first']['lost'] &&
-								$all['威廉希尔']['first']['draw'] <= $all['澳门']['first']['draw'] &&
+								//$all['威廉希尔']['first']['draw'] <= $all['澳门']['first']['draw'] &&
 								(
 										(
 										$all['澳门']['end']['draw'] <= $all['澳门']['first']['draw'] &&
@@ -292,8 +292,8 @@ function model2($param, $odd, $unfinish)
 										$all['澳门']['end']['draw'] <= $all['澳门']['first']['draw'] )
 								)&&
 								$all['立博']['end']['draw'] <= $all['立博']['first']['draw']  &&
-								$all['SportingBet (博天堂)']['end']['win'] <= $all['SportingBet (博天堂)']['first']['win'] &&
-								$all['Interwetten']['end']['lost'] > $all['Interwetten']['first']['lost'])
+								$all['SportingBet (博天堂)']['end']['win'] <= $all['SportingBet (博天堂)']['first']['win'] )
+								//$all['Interwetten']['end']['lost'] > $all['Interwetten']['first']['lost'])
 				{
 						if($unfinish)
 						{
