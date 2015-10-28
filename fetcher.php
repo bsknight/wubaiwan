@@ -1,7 +1,8 @@
 <?php
 $debug=0;
-$debugnum='522025';
-
+$debugnum='552415';
+$res_array = array();
+$link="http://m.500.com/info/index.php?c=detail&fid=";
 function cal_yazhi($param, $type)
 {
 		$url = "http://m.500.com/info/index.php?c=detail&a=yazhiAjax&r=1&fid=".$param['num'];
@@ -36,6 +37,8 @@ function cal_yazhi($param, $type)
 
 function model1(&$param, $odd, $unfinish)
 {
+		global $link;
+		global $res_array;
 		global $debug;
 		global $debugnum;
 		$score = explode(":",$param['score']);
@@ -85,6 +88,12 @@ function model1(&$param, $odd, $unfinish)
 		{
 				var_dump($avg);
 				var_dump($type);
+				/*
+				var_dump($all['立博']);
+				var_dump($all['威廉希尔']);
+				var_dump($all['澳门']);
+				var_dump($all['Interwetten']);
+				*/
 		}
 
 		if($type == 'homelow')
@@ -97,7 +106,7 @@ function model1(&$param, $odd, $unfinish)
 								//$jingcai['end']['win'] <= $jingcai['first']['win'] &&
 								//$jingcai['end']['draw'] >= $jingcai['first']['draw'] &&
 								//$jingcai['end']['lost'] >= $jingcai['first']['lost'] &&
-								
+
 								$all['立博']['end']['win'] <= $all['立博']['first']['win'] &&
 								$all['立博']['end']['draw'] >= $all['立博']['first']['draw'] &&
 								$all['立博']['end']['lost'] >= $all['立博']['first']['lost'] &&
@@ -105,7 +114,7 @@ function model1(&$param, $odd, $unfinish)
 								$all['威廉希尔']['end']['win'] <= $all['威廉希尔']['first']['win'] &&
 								$all['威廉希尔']['end']['draw'] >= $all['威廉希尔']['first']['draw'] &&
 								$all['威廉希尔']['end']['lost'] >= $all['威廉希尔']['first']['lost'] &&
-								
+
 								$all['澳门']['end']['win'] <= $all['澳门']['first']['win'] &&
 								$all['澳门']['end']['draw'] >= $all['澳门']['first']['draw'] &&
 								$all['澳门']['end']['lost'] >= $all['澳门']['first']['lost'] &&
@@ -117,19 +126,20 @@ function model1(&$param, $odd, $unfinish)
 										{
 												$rang = cal_yazhi($param, $type);
 												$param['rang'] = $rang;
-												if($rang < 1)
+												if($rang < 1 && $rang!=0 && !$unfinish)
 												{
 													return 2;
 												}
 												if($unfinish)
 												{
 														echo 'model1:'.$param['num']."\n";
+														$res_array['model1'][] = $link.$param['num'];
 												}
 												elseif($score[0] > $score[1]+$rang)	// home win
 												{
 														return 0;
 												}
-												elseif($score[0] < $score[1]+$rang)
+												elseif($score[0] <= $score[1]+$rang)
 												{
 														return 1;
 												}
@@ -138,6 +148,7 @@ function model1(&$param, $odd, $unfinish)
 		elseif($type == 'awaylow')
 		{
 				if($avg['first']['lost'] < 2 && 
+						
 								$avg['end']['win'] >= $avg['first']['win'] && 
 								$avg['end']['draw'] >= $avg['first']['draw'] && 
 								$avg['end']['lost'] <= $avg['first']['lost'] && 
@@ -145,7 +156,7 @@ function model1(&$param, $odd, $unfinish)
 								//$jingcai['end']['win'] >= $jingcai['first']['win'] &&
 								//$jingcai['end']['draw'] >= $jingcai['first']['draw'] &&
 								//$jingcai['end']['lost'] <= $jingcai['first']['lost'] &&
-								
+
 								$all['立博']['end']['win'] >= $all['立博']['first']['win'] &&
 								$all['立博']['end']['draw'] >= $all['立博']['first']['draw'] &&
 								$all['立博']['end']['lost'] <= $all['立博']['first']['lost'] &&
@@ -153,7 +164,7 @@ function model1(&$param, $odd, $unfinish)
 								$all['威廉希尔']['end']['win'] >= $all['威廉希尔']['first']['win'] &&
 								$all['威廉希尔']['end']['draw'] >= $all['威廉希尔']['first']['draw'] &&
 								$all['威廉希尔']['end']['lost'] <= $all['威廉希尔']['first']['lost'] &&
-								
+
 								$all['澳门']['end']['win'] >= $all['澳门']['first']['win'] &&
 								$all['澳门']['end']['draw'] >= $all['澳门']['first']['draw'] &&
 								$all['澳门']['end']['lost'] <= $all['澳门']['first']['lost'] &&
@@ -165,19 +176,20 @@ function model1(&$param, $odd, $unfinish)
 										{
 												$rang = cal_yazhi($param, $type);
 												$param['rang'] = $rang;
-												if($rang < 1 && !$unfinish)
+												if($rang < 1 && $rang!=0 && !$unfinish)
 												{
 													return 2;
 												}
 												if($unfinish)
 												{
 														echo 'model1:'.$param['num']."\n";
+														$res_array['model1'][] = $link.$param['num'];
 												}
 												elseif($score[1] > $score[0]+$rang)// away win
 												{
 														return 0;
 												}
-												elseif($score[1] < $score[0]+$rang)
+												elseif($score[1] <= $score[0]+$rang)
 												{
 														return 1;
 												}
@@ -187,6 +199,8 @@ function model1(&$param, $odd, $unfinish)
 }
 function model2($param, $odd, $unfinish)
 {
+		global $link;
+		global $res_array;
 		global $debug;
 		global $debugnum;
 		$score = explode(":",$param['score']);
@@ -243,26 +257,29 @@ function model2($param, $odd, $unfinish)
 		{
 				if($avg['end']['win'] > 1.9 && 
 								$avg['end']['win'] > $avg['first']['win'] && 
-								$jingcai['end']['win'] > 2 &&
-								$jingcai['end']['win'] > $jingcai['first']['win'] &&
+								//$jingcai['end']['win'] > 2 &&
+								//$jingcai['end']['win'] > $jingcai['first']['win'] &&
 								//$all['威廉希尔']['first']['draw'] <= $all['澳门']['first']['draw'] &&
 								(
 										(
 										$all['澳门']['end']['draw'] <= $all['澳门']['first']['draw']  &&
-										$all['威廉希尔']['end']['win'] > $all['威廉希尔']['first']['win'] &&
-										$all['威廉希尔']['end']['draw'] <= $all['威廉希尔']['first']['draw'] ) ||
+										$all['威廉希尔']['end']['win'] > $all['威廉希尔']['first']['win'] 
+										//$all['威廉希尔']['end']['draw'] <= $all['威廉希尔']['first']['draw'] 
+										) ||
 										(
 										$all['威廉希尔']['end']['draw'] <= $all['威廉希尔']['first']['draw'] &&
-										$all['澳门']['end']['win'] > $all['澳门']['first']['win'] &&
-										$all['澳门']['end']['draw'] <= $all['澳门']['first']['draw'] ) 
+										$all['澳门']['end']['win'] > $all['澳门']['first']['win'] 
+										//$all['澳门']['end']['draw'] <= $all['澳门']['first']['draw'] 
+										) 
 								)&&
-								$all['立博']['end']['draw'] <= $all['立博']['first']['draw']  &&
-								$all['SportingBet (博天堂)']['end']['lost'] <= $all['SportingBet (博天堂)']['first']['lost'] )
+								//$all['立博']['end']['draw'] <= $all['立博']['first']['draw']  &&
+								$all['SportingBet (博天堂)']['end']['lost'] <= $all['SportingBet (博天堂)']['first']['lost'])
 								//$all['Interwetten']['end']['win'] > $all['Interwetten']['first']['win'])
 				{
 						if($unfinish)
 						{
 								echo $param['num']."\n";
+								$res_array['model2'][] = $link.$param['num'];
 						}
 						elseif(!($score[0] <= $score[1]))	// home win
 						{
@@ -278,26 +295,29 @@ function model2($param, $odd, $unfinish)
 		{
 				if($avg['end']['lost'] > 1.9 && 
 								$avg['end']['lost'] > $avg['first']['lost'] && 
-								$jingcai['end']['lost'] > 2 &&
-								$jingcai['end']['lost'] > $jingcai['first']['lost'] &&
+								//$jingcai['end']['lost'] > 2 &&
+								//$jingcai['end']['lost'] > $jingcai['first']['lost'] &&
 								//$all['威廉希尔']['first']['draw'] <= $all['澳门']['first']['draw'] &&
 								(
 										(
 										$all['澳门']['end']['draw'] <= $all['澳门']['first']['draw'] &&
-										$all['威廉希尔']['end']['lost'] > $all['威廉希尔']['first']['lost'] &&
-										$all['威廉希尔']['end']['draw'] <= $all['威廉希尔']['first']['draw'] )||
+										$all['威廉希尔']['end']['lost'] > $all['威廉希尔']['first']['lost'] 
+										//$all['威廉希尔']['end']['draw'] <= $all['威廉希尔']['first']['draw'] 
+										)||
 										(
 										$all['威廉希尔']['end']['draw'] <= $all['威廉希尔']['first']['draw'] &&
-										$all['澳门']['end']['lost'] > $all['澳门']['first']['lost'] &&
-										$all['澳门']['end']['draw'] <= $all['澳门']['first']['draw'] )
+										$all['澳门']['end']['lost'] > $all['澳门']['first']['lost'] 
+										//$all['澳门']['end']['draw'] <= $all['澳门']['first']['draw'] 
+										)
 								)&&
-								$all['立博']['end']['draw'] <= $all['立博']['first']['draw']  &&
-								$all['SportingBet (博天堂)']['end']['win'] <= $all['SportingBet (博天堂)']['first']['win'] )
+								//$all['立博']['end']['draw'] <= $all['立博']['first']['draw']  &&
+								$all['SportingBet (博天堂)']['end']['win'] <= $all['SportingBet (博天堂)']['first']['win']) 
 								//$all['Interwetten']['end']['lost'] > $all['Interwetten']['first']['lost'])
 				{
 						if($unfinish)
 						{
 								echo $param['num']."\n";
+								$res_array['model2'][] = $link.$param['num'];
 						}
 						elseif(!($score[1] <= $score[0]))// away win
 						{
@@ -373,13 +393,14 @@ function Obser($date, &$good_array, &$bad_array, $unfinish, &$total)
 				preg_match("/ouzhi\-(.+)\./", $url, $num, PREG_OFFSET_CAPTURE, 0);
 				//var_dump($num);
 				$url = $oupei.$num[1][0];
-
+				
 				if($debug==1 && $num[1][0] != $debugnum)
 				{
 						continue;
 				}
 
 				var_dump($url);
+				//echo $num[1][0].",";
 				//$url = "http://m.500.com/info/index.php?c=detail&a=ouzhiAjax&r=1&fid=529024";
 				$contents = curl_get_contents($url);
 				$json = json_decode($contents, true);
@@ -390,6 +411,7 @@ function Obser($date, &$good_array, &$bad_array, $unfinish, &$total)
 				preg_match('/d-game-time\"\>(\d+\&nbsp;:\&nbsp;\d+)</', $tmp, $out, PREG_OFFSET_CAPTURE);
 				$param['score'] = str_replace("&nbsp;", "", $out[1][0]);
 				$param['num'] = $num[1][0];
+				$param['url'] = $url;
 				if(!$unfinish && empty($param['score']))
 				{
 						echo "empty score: ".$num[1][0]."\n";
@@ -414,13 +436,13 @@ function Obser($date, &$good_array, &$bad_array, $unfinish, &$total)
 				if($ret == 1)
 				{
 						$param['res']='win';
-						$good_array[2][] = $param['num'];
+						$good_array[2][] = $param;
 						$total['model2'][] = $param;
 				}
 				elseif($ret == 0)
 				{
 						$param['res']='lose';
-						$bad_array[2][] = $param['num'];
+						$bad_array[2][] = $param;
 						$total['model2'][] = $param;
 				}
 
@@ -458,5 +480,14 @@ echo "bad\n";
 var_dump($bad_array[2]);
 echo "good\n";
 var_dump($good_array[2]);
+echo "#####################total:\n";
 echo "total\n";
 var_dump($total);
+
+$str_mail = $start."-".$end."\n";
+$str_mail = $str_mail."model1 bad:\n".json_encode($bad_array[1])."\n";
+$str_mail = $str_mail."model1 good:\n".json_encode($good_array[1])."\n";
+$str_mail = $str_mail."model2 bad:\n".json_encode($bad_array[2])."\n";
+$str_mail = $str_mail."model2 good:\n".json_encode($good_array[2])."\n";
+$str_mail = $str_mail."result:\n".str_replace('\\', '', json_encode($res_array))."\n";
+mail('xiesicong@baidu.com', 'result', $str_mail);
