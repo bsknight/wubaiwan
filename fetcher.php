@@ -317,8 +317,11 @@ function model2($param, $odd, $unfinish)
 									$all[$name]['end']['lost'] > $all[$name]['first']['lost'])
 								)
 								{
-									$result = 0;
-									break;
+									if($name == '威廉希尔' || $name=='澳门' || $name=='立博')
+									{
+										$result = 0;
+										break;
+									}
 								}
 							}			
 						}
