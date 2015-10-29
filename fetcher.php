@@ -256,7 +256,7 @@ function model2($param, $odd, $unfinish)
 		if($type == 'homelow')
 		{
 				if($avg['end']['win'] > 2.05 && 
-					$avg['first']['win'] > 2.05 && 
+					$avg['first']['win'] > 2.01 && 
 					$avg['end']['win'] > $avg['first']['win'] 
 				)
 				{
@@ -302,7 +302,7 @@ function model2($param, $odd, $unfinish)
 		elseif($type == 'awaylow')
 		{
 				if($avg['end']['lost'] > 2.05 && 
-					$avg['first']['lost'] > 2.05 && 
+					$avg['first']['lost'] > 2.01 && 
 					$avg['end']['lost'] > $avg['first']['lost'] 
 				)
 				{
