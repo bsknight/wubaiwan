@@ -474,7 +474,7 @@ $bad_array = array();
 $good_array = array();
 $total = array();
 $unfinish = 0;
-if(time()-$time<60*60*36)
+if(time()-$time<60*60*33)
 {
 		echo "today match\n";
 		$unfinish=1;
@@ -500,11 +500,10 @@ var_dump($good_array[2]);
 echo "#####################total:\n";
 echo "total\n";
 //var_dump($total);
-
 $str_mail = $start."-".$end."\n";
-$str_mail = $str_mail."model1 bad:\n".json_encode($bad_array[1])."\n";
-$str_mail = $str_mail."model1 good:\n".json_encode($good_array[1])."\n";
-$str_mail = $str_mail."model2 bad:\n".json_encode($bad_array[2])."\n";
-$str_mail = $str_mail."model2 good:\n".json_encode($good_array[2])."\n";
+$str_mail = $str_mail."model1 bad:\n".str_replace('\\', '', json_encode($bad_array[1]))."\n";
+$str_mail = $str_mail."model1 good:\n".str_replace('\\', '', json_encode($good_array[1]))."\n";
+$str_mail = $str_mail."model2 bad:\n".str_replace('\\', '', json_encode($bad_array[2]))."\n";
+$str_mail = $str_mail."model2 good:\n".str_replace('\\', '', json_encode($good_array[2]))."\n";
 $str_mail = $str_mail."result:\n".str_replace('\\', '', json_encode($res_array))."\n";
 mail('xiesicong@baidu.com', 'result', $str_mail);
