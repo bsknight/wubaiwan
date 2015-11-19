@@ -3,6 +3,167 @@ $debug=0;
 $debugnum='552415';
 $res_array = array();
 $link="http://m.500.com/info/index.php?c=detail&fid=";
+function model3($param, $odd, $unfinish)
+{
+		global $link;
+		global $res_array;
+		global $debug;
+		global $debugnum;
+		$score = explode(":",$param['score']);
+		$score[0] = intval($score[0]);
+		$score[1] = intval($score[1]);
+
+		$my_array = array("威廉希尔","澳门","立博","Bet365","Interwetten","SNAI","伟德","Bwin","Coral","SportingBet (博天堂)");
+		$all = array();
+		$avg['first'] = array();
+		$avg['end'] = array();
+		$jingcai = array();
+		$count=0;
+		foreach($odd as $m)
+		{
+				if(in_array($m['name'], $my_array))
+				{
+						$all[$m['name']] = $m;
+						$avg['first']['win'] += $m['first']['win'];
+						$avg['end']['win'] += $m['end']['win'];
+						$avg['first']['draw'] += $m['first']['draw'];
+						$avg['end']['draw'] += $m['end']['draw'];
+						$avg['first']['lost'] += $m['first']['lost'];
+						$avg['end']['lost'] += $m['end']['lost'];
+						$count++;
+				}
+				elseif($m['name'] == '竞彩官方')
+				{
+						$jingcai['first']['win'] = $m['first']['win'];
+						$jingcai['end']['win'] = $m['end']['win'];
+						$jingcai['first']['draw'] = $m['first']['draw'];
+						$jingcai['end']['draw'] = $m['end']['draw'];
+						$jingcai['first']['lost'] = $m['first']['lost'];
+						$jingcai['end']['lost'] = $m['end']['lost'];
+				}
+				elseif($m['name'] == '必发')
+				{
+						$bifa['first']['win'] = $m['first']['win'];
+						$bifa['end']['win'] = $m['end']['win'];
+						$bifa['first']['draw'] = $m['first']['draw'];
+						$bifa['end']['draw'] = $m['end']['draw'];
+						$bifa['first']['lost'] = $m['first']['lost'];
+						$bifa['end']['lost'] = $m['end']['lost'];
+				}
+		}
+
+		$avg['first']['win'] /= $count;
+		$avg['end']['win'] /= $count;
+		$avg['first']['draw'] /= $count;
+		$avg['end']['draw'] /= $count;
+		$avg['first']['lost'] /= $count;
+		$avg['end']['lost'] /= $count;
+		//var_dump($avg);
+		$type = $avg['first']['win'] < $avg['first']['lost']? 'homelow':'awaylow';
+
+		if($debug==1 && $param['num'] == $debugnum)
+		{
+				var_dump($count);
+				var_dump($avg);
+				var_dump($type);
+		}
+		if($type == 'homelow')
+		{
+				if( 
+					$bifa['fisrt']['win'] <= $bifa['end']['win'] &&
+					$bifa['fisrt']['draw'] >= $bifa['end']['draw'] &&
+					$bifa['fisrt']['lost'] >= $bifa['end']['lost'] &&
+					$avg['first']['win'] < 2 && 
+					$avg['end']['win'] > $avg['first']['win'] 
+				)
+				{
+						$num = 0;	
+						$result = 1;
+						foreach($my_array as $name)
+						{
+							if(isset($all[$name]))
+							{
+								$num++;
+								if(!($all[$name]['end']['win'] >= $all[$name]['first']['win'] &&
+									$all[$name]['end']['draw'] <= $all[$name]['first']['draw'] &&
+									$all[$name]['end']['lost'] <= $all[$name]['first']['lost'] 
+									)
+								)
+								{
+									$result = 0;
+									break;
+								}
+									
+							}
+						}
+						if($result == 0)
+						{
+							return 2;
+						}
+						if($unfinish)
+						{
+								echo "model3:".$param['num']."\n";
+								$res_array['model3'][] = $link.$param['num'];
+						}
+						elseif(!($score[0] <= $score[1]))	// home lose
+						{
+								return 0;
+						}
+						else
+						{
+								return 1;
+						}
+				}
+		}
+		elseif($type == 'awaylow')
+		{
+				if(
+					$bifa['fisrt']['win'] >= $bifa['end']['win'] &&
+					$bifa['fisrt']['draw'] >= $bifa['end']['draw'] &&
+					$bifa['fisrt']['lost'] <= $bifa['end']['lost'] &&
+					$avg['first']['lost'] < 2 && 
+					$avg['end']['lost'] > $avg['first']['lost'] 
+				)
+				{
+						$num = 0;	
+						$result = 1;
+						foreach($my_array as $name)
+						{
+							if(isset($all[$name]))
+							{
+								$num++;
+								if(!($all[$name]['end']['win'] <= $all[$name]['first']['win'] &&
+									$all[$name]['end']['draw'] <= $all[$name]['first']['draw'] &&
+									$all[$name]['end']['lost'] >= $all[$name]['first']['lost']
+									)
+								)
+								{
+										$result = 0;
+										break;
+								}
+							}			
+						}
+						if($result == 0)
+						{
+							return 2;
+						}
+						if($unfinish)
+						{
+								echo "model3:".$param['num']."\n";
+								$res_array['model3'][] = $link.$param['num'];
+						}
+						elseif(!($score[1] <= $score[0]))// away lose
+						{
+								return 0;
+						}
+						else
+						{
+								return 1;
+						}
+				}
+		}
+		return 2;
+}
 function cal_yazhi($param, $type)
 {
 		$url = "http://m.500.com/info/index.php?c=detail&a=yazhiAjax&r=1&fid=".$param['num'];
@@ -462,6 +623,21 @@ function Obser($date, &$good_array, &$bad_array, $unfinish, &$total)
 						$total['model2'][] = $param;
 				}
 
+				$ret = model3($param, $json['list'], $unfinish);
+				//var_dump($ret);
+				if($ret == 1)
+				{
+						$param['res']='win';
+						$good_array[3][] = $param;
+						$total['model3'][] = $param;
+				}
+				elseif($ret == 0)
+				{
+						$param['res']='lose';
+						$bad_array[3][] = $param;
+						$total['model3'][] = $param;
+				}
+
 		}	
 }
 $start = $argv[1];
@@ -497,13 +673,27 @@ echo "bad\n";
 var_dump($bad_array[2]);
 echo "good\n";
 var_dump($good_array[2]);
+echo "#####################model3:\n";
+echo "bad\n";
+var_dump($bad_array[3]);
+echo "good\n";
+var_dump($good_array[3]);
 echo "#####################total:\n";
 echo "total\n";
+var_dump(count($bad_array[1]));
+var_dump(count($good_array[1]));
+var_dump(count($bad_array[2]));
+var_dump(count($good_array[2]));
+var_dump(count($bad_array[3]));
+var_dump(count($good_array[3]));
 //var_dump($total);
 $str_mail = $start."-".$end."\n";
 $str_mail = $str_mail."model1 bad:\n".str_replace('\\', '', json_encode($bad_array[1]))."\n";
 $str_mail = $str_mail."model1 good:\n".str_replace('\\', '', json_encode($good_array[1]))."\n";
 $str_mail = $str_mail."model2 bad:\n".str_replace('\\', '', json_encode($bad_array[2]))."\n";
 $str_mail = $str_mail."model2 good:\n".str_replace('\\', '', json_encode($good_array[2]))."\n";
+$str_mail = $str_mail."model3 bad:\n".str_replace('\\', '', json_encode($bad_array[3]))."\n";
+$str_mail = $str_mail."model3 good:\n".str_replace('\\', '', json_encode($good_array[3]))."\n";
 $str_mail = $str_mail."result:\n".str_replace('\\', '', json_encode($res_array))."\n";
 mail('xiesicong@baidu.com', 'result', $str_mail);
+
