@@ -1,6 +1,6 @@
 <?php
 $debug=0;
-$debugnum='552415';
+$debugnum='511343';
 $res_array = array();
 $link="http://m.500.com/info/index.php?c=detail&fid=";
 function model3($param, $odd, $unfinish)
@@ -70,10 +70,8 @@ function model3($param, $odd, $unfinish)
 		if($type == 'homelow')
 		{
 				if( 
-					$bifa['fisrt']['win'] <= $bifa['end']['win'] &&
-					$bifa['fisrt']['draw'] >= $bifa['end']['draw'] &&
-					$bifa['fisrt']['lost'] >= $bifa['end']['lost'] &&
-					$avg['first']['win'] < 2 && 
+					$avg['first']['win'] < 1.9 && 
+					$avg['end']['win'] < 1.98 && 
 					$avg['end']['win'] > $avg['first']['win'] 
 				)
 				{
@@ -84,14 +82,28 @@ function model3($param, $odd, $unfinish)
 							if(isset($all[$name]))
 							{
 								$num++;
-								if(!($all[$name]['end']['win'] >= $all[$name]['first']['win'] &&
-									$all[$name]['end']['draw'] <= $all[$name]['first']['draw'] &&
-									$all[$name]['end']['lost'] <= $all[$name]['first']['lost'] 
+								if(!($all[$name]['end']['win'] > $all[$name]['first']['win'] &&
+									$all[$name]['end']['draw'] < $all[$name]['first']['draw'] &&
+									$all[$name]['end']['lost'] < $all[$name]['first']['lost'] 
 									)
 								)
 								{
-									$result = 0;
-									break;
+									//if($name == '威廉希尔' || $name=='澳门' || $name=='立博')
+									if($name != "Interwetten")
+									{
+										$result = 0;
+										break;
+									}
+									else
+									{
+									if(!($all[$name]['end']['win'] >= $all[$name]['first']['win'] &&
+										$all[$name]['end']['draw'] <= $all[$name]['first']['draw'] &&
+										$all[$name]['end']['lost'] <= $all[$name]['first']['lost']))
+										{
+											$result = 0;
+											break;
+										}
+									}
 								}
 									
 							}
@@ -105,7 +117,7 @@ function model3($param, $odd, $unfinish)
 								echo "model3:".$param['num']."\n";
 								$res_array['model3'][] = $link.$param['num'];
 						}
-						elseif(!($score[0] <= $score[1]))	// home lose
+						elseif($score[0] > $score[1])	// home lose
 						{
 								return 0;
 						}
@@ -118,10 +130,8 @@ function model3($param, $odd, $unfinish)
 		elseif($type == 'awaylow')
 		{
 				if(
-					$bifa['fisrt']['win'] >= $bifa['end']['win'] &&
-					$bifa['fisrt']['draw'] >= $bifa['end']['draw'] &&
-					$bifa['fisrt']['lost'] <= $bifa['end']['lost'] &&
-					$avg['first']['lost'] < 2 && 
+					$avg['first']['lost'] < 1.9 && 
+					$avg['end']['lost'] < 1.98 && 
 					$avg['end']['lost'] > $avg['first']['lost'] 
 				)
 				{
@@ -132,14 +142,28 @@ function model3($param, $odd, $unfinish)
 							if(isset($all[$name]))
 							{
 								$num++;
-								if(!($all[$name]['end']['win'] <= $all[$name]['first']['win'] &&
-									$all[$name]['end']['draw'] <= $all[$name]['first']['draw'] &&
-									$all[$name]['end']['lost'] >= $all[$name]['first']['lost']
+								if(!($all[$name]['end']['win'] < $all[$name]['first']['win'] &&
+									$all[$name]['end']['draw'] < $all[$name]['first']['draw'] &&
+									$all[$name]['end']['lost'] > $all[$name]['first']['lost']
 									)
 								)
 								{
+									//if($name == '威廉希尔' || $name=='澳门' || $name=='立博')
+									if($name != "Interwetten")
+									{	
 										$result = 0;
 										break;
+									}
+									else
+ 									{
+ 									if(!($all[$name]['end']['win'] <= $all[$name]['first']['win'] &&
+ 										$all[$name]['end']['draw'] <= $all[$name]['first']['draw'] &&
+ 										$all[$name]['end']['lost'] >= $all[$name]['first']['lost']))
+ 										{
+ 											$result = 0;
+ 											break;
+ 										}
+ 									}
 								}
 							}			
 						}
@@ -152,7 +176,7 @@ function model3($param, $odd, $unfinish)
 								echo "model3:".$param['num']."\n";
 								$res_array['model3'][] = $link.$param['num'];
 						}
-						elseif(!($score[1] <= $score[0]))// away lose
+						elseif($score[1] > $score[0])
 						{
 								return 0;
 						}
@@ -298,11 +322,11 @@ function model1(&$param, $odd, $unfinish)
 												}
 												elseif($score[0] > $score[1]+$rang)	// home win
 												{
-														return 0;
+														return 1;
 												}
 												elseif($score[0] <= $score[1]+$rang)
 												{
-														return 1;
+														return 0;
 												}
 										}
 		}
@@ -348,11 +372,11 @@ function model1(&$param, $odd, $unfinish)
 												}
 												elseif($score[1] > $score[0]+$rang)// away win
 												{
-														return 0;
+														return 1;
 												}
 												elseif($score[1] <= $score[0]+$rang)
 												{
-														return 1;
+														return 0;
 												}
 										}
 		}
@@ -450,7 +474,7 @@ function model2($param, $odd, $unfinish)
 								echo "model2:".$param['num']."\n";
 								$res_array['model2'][] = $link.$param['num'];
 						}
-						elseif(!($score[0] <= $score[1]))	// home win
+						elseif($score[0] > $score[1])	// home win
 						{
 								return 0;
 						}
@@ -495,7 +519,7 @@ function model2($param, $odd, $unfinish)
 								echo "model2:".$param['num']."\n";
 								$res_array['model2'][] = $link.$param['num'];
 						}
-						elseif(!($score[1] <= $score[0]))// away win
+						elseif($score[1] > $score[0])// away win
 						{
 								return 0;
 						}
@@ -518,7 +542,7 @@ function curl_get_contents($url)
 		$ch = curl_init();
 		curl_setopt($ch, CURLOPT_URL, $url);            //设置访问的url地址
 		//curl_setopt($ch,CURLOPT_HEADER,1);            //是否显示头部信息
-		curl_setopt($ch, CURLOPT_TIMEOUT, 5);           //设置超时
+		curl_setopt($ch, CURLOPT_TIMEOUT, 10);           //设置超时
 		curl_setopt($ch, CURLOPT_USERAGENT, $userAgent);   //用户访问代理 User-Agent
 		//curl_setopt($ch, CURLINFO_HEADER_OUT, 1);
 		//curl_setopt($ch, CURLOPT_REFERER,_REFERER_);        //设置 referer
@@ -680,11 +704,17 @@ echo "good\n";
 var_dump($good_array[3]);
 echo "#####################total:\n";
 echo "total\n";
+echo "bad\n";
 var_dump(count($bad_array[1]));
+echo "good\n";
 var_dump(count($good_array[1]));
+echo "bad\n";
 var_dump(count($bad_array[2]));
+echo "good\n";
 var_dump(count($good_array[2]));
+echo "bad\n";
 var_dump(count($bad_array[3]));
+echo "good\n";
 var_dump(count($good_array[3]));
 //var_dump($total);
 $str_mail = $start."-".$end."\n";
