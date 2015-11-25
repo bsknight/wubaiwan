@@ -81,29 +81,35 @@ function model3($param, $odd, $unfinish)
 						{
 							if(isset($all[$name]))
 							{
-								$num++;
 								if(!($all[$name]['end']['win'] > $all[$name]['first']['win'] &&
-									$all[$name]['end']['draw'] < $all[$name]['first']['draw'] &&
+									$all[$name]['end']['draw'] <= $all[$name]['first']['draw'] &&
 									$all[$name]['end']['lost'] < $all[$name]['first']['lost'] 
 									)
 								)
 								{
+									$num++;
 									//if($name == '威廉希尔' || $name=='澳门' || $name=='立博')
-									if($name != "Interwetten")
+									//if($name != "Interwetten")
+									//{
+									//}
+									if($num >= 3)
 									{
 										$result = 0;
 										break;
 									}
-									else
-									{
+									/*
 									if(!($all[$name]['end']['win'] >= $all[$name]['first']['win'] &&
 										$all[$name]['end']['draw'] <= $all[$name]['first']['draw'] &&
 										$all[$name]['end']['lost'] <= $all[$name]['first']['lost']))
 										{
-											$result = 0;
-											break;
+											if($name == '威廉希尔' || $name=='澳门' || $name=='立博')
+ 											{
+												$result = 0;
+												break;
+											}
 										}
 									}
+									*/
 								}
 									
 							}
@@ -143,27 +149,35 @@ function model3($param, $odd, $unfinish)
 							{
 								$num++;
 								if(!($all[$name]['end']['win'] < $all[$name]['first']['win'] &&
-									$all[$name]['end']['draw'] < $all[$name]['first']['draw'] &&
+									$all[$name]['end']['draw'] <= $all[$name]['first']['draw'] &&
 									$all[$name]['end']['lost'] > $all[$name]['first']['lost']
 									)
 								)
 								{
-									//if($name == '威廉希尔' || $name=='澳门' || $name=='立博')
+									$num++;
+									/*
 									if($name != "Interwetten")
 									{	
+									}
+									*/
+									if($num >= 3)
+									{
 										$result = 0;
 										break;
 									}
-									else
- 									{
+									/*
  									if(!($all[$name]['end']['win'] <= $all[$name]['first']['win'] &&
  										$all[$name]['end']['draw'] <= $all[$name]['first']['draw'] &&
  										$all[$name]['end']['lost'] >= $all[$name]['first']['lost']))
  										{
- 											$result = 0;
- 											break;
+											if($name == '威廉希尔' || $name=='澳门' || $name=='立博')
+ 											{
+												$result = 0;
+ 												break;
+											}
  										}
  									}
+									*/
 								}
 							}			
 						}
@@ -442,7 +456,8 @@ function model2($param, $odd, $unfinish)
 		{
 				if($avg['end']['win'] > 2.05 && 
 					$avg['first']['win'] > 2.01 && 
-					$avg['end']['win'] > $avg['first']['win'] 
+					$avg['end']['win'] > $avg['first']['win'] &&
+					$avg['end']['win'] > $avg['end']['lost']
 				)
 				{
 						$num = 0;	
@@ -488,7 +503,8 @@ function model2($param, $odd, $unfinish)
 		{
 				if($avg['end']['lost'] > 2.05 && 
 					$avg['first']['lost'] > 2.01 && 
-					$avg['end']['lost'] > $avg['first']['lost'] 
+					$avg['end']['lost'] > $avg['first']['lost'] &&
+					$avg['end']['win'] < $avg['end']['lost']
 				)
 				{
 						$num = 0;	
