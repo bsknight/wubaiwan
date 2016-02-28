@@ -741,5 +741,6 @@ $str_mail = $str_mail."model2 good:\n".str_replace('\\', '', json_encode($good_a
 $str_mail = $str_mail."model3 bad:\n".str_replace('\\', '', json_encode($bad_array[3]))."\n";
 $str_mail = $str_mail."model3 good:\n".str_replace('\\', '', json_encode($good_array[3]))."\n";
 $str_mail = $str_mail."result:\n".str_replace('\\', '', json_encode($res_array))."\n";
-mail('xiesicong@baidu.com', 'result', $str_mail);
+$ret = mail('xiesicong@baidu.com,241092598@qq.com', 'result', $str_mail);
+var_dump($ret);
 
