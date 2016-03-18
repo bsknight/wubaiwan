@@ -466,11 +466,14 @@ function model2($param, $odd, $unfinish)
 						{
 							if(isset($all[$name]))
 							{
+								$num++;
 								if(!($all[$name]['end']['win'] > $all[$name]['first']['win'] &&
 									$all[$name]['end']['lost'] < $all[$name]['first']['lost'])
 								)
 								{
-									if($name == '威廉希尔' || $name=='澳门' || $name=='立博' || $name == 'Interwetten')
+										$result = 0;
+										break;
+									if($name == '威廉希尔' || $name=='澳门' || $name=='立博')
 									{
 										$result = 0;
 										break;
@@ -478,19 +481,6 @@ function model2($param, $odd, $unfinish)
 								}
 									
 							}
-								if(!($all[$name]['end']['draw'] <= $all[$name]['first']['draw']))
-								{       
-									//if($name == 'Interwetten' || $name == 'Bet365' || $name == '威廉希尔')
-									if($name == 'Interwetten')
-									{       
-										$num++; 
-										if($num == 1)
-										{       
-											$result = 0;
-											break;  
-										}       
-									}       
-								} 
 						}
 						if($result == 0)
 						{
@@ -525,30 +515,20 @@ function model2($param, $odd, $unfinish)
 						{
 							if(isset($all[$name]))
 							{
+								$num++;
 								if(!($all[$name]['end']['win'] < $all[$name]['first']['win'] &&
 									$all[$name]['end']['lost'] > $all[$name]['first']['lost'])
 								)
 								{
-									if($name == '威廉希尔' || $name=='澳门' || $name=='立博' || $name == 'Interwetten')
+										$result = 0;
+										break;
+									if($name == '威廉希尔' || $name=='澳门' || $name=='立博')
 									{
 										$result = 0;
 										break;
 									}
 								}
 							}			
-                                if(!($all[$name]['end']['draw'] <= $all[$name]['first']['draw']))
-                                {
-                                    //if($name == 'Interwetten' || $name == 'Bet365' || $name == '威廉希尔')
-                                    if($name == 'Interwetten')
-                                    {
-                                        $num++;
-                                        if($num==1)
-                                        {
-                                            $result = 0;
-                                            break;
-                                        }
-									}
-								}
 						}
 						if($result == 0)
 						{
@@ -626,9 +606,9 @@ function Obser($date, &$good_array, &$bad_array, $unfinish, &$total)
 		foreach($res[1] as $k=>$url)
 		{
 				echo ".";
-				if($count++ > 300)
+				if($count++ > 100)
 				{
-						echo "count > 300 exit..\n";
+						echo "count > 100 exit..\n";
 						break;
 				}
 				preg_match("/ouzhi\-(.+)\./", $url, $num, PREG_OFFSET_CAPTURE, 0);
@@ -658,6 +638,7 @@ function Obser($date, &$good_array, &$bad_array, $unfinish, &$total)
 						echo "empty score: ".$num[1][0]."\n";
 						continue;
 				}
+				/*
 				$ret = model1($param, $json['list'], $unfinish);
 				if($ret == 1)
 				{
@@ -671,7 +652,7 @@ function Obser($date, &$good_array, &$bad_array, $unfinish, &$total)
 						$bad_array[1][] = $param;
 						$total['model1'][] = $param;
 				}
-
+				*/
 				$ret = model2($param, $json['list'], $unfinish);
 				//var_dump($ret);
 				if($ret == 1)
@@ -686,7 +667,7 @@ function Obser($date, &$good_array, &$bad_array, $unfinish, &$total)
 						$bad_array[2][] = $param;
 						$total['model2'][] = $param;
 				}
-
+				/*
 				$ret = model3($param, $json['list'], $unfinish);
 				//var_dump($ret);
 				if($ret == 1)
@@ -701,7 +682,7 @@ function Obser($date, &$good_array, &$bad_array, $unfinish, &$total)
 						$bad_array[3][] = $param;
 						$total['model3'][] = $param;
 				}
-
+				*/
 		}	
 }
 $start = $argv[1];

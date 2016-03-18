@@ -75,6 +75,7 @@ function model3($param, $odd, $unfinish)
 					$avg['end']['win'] > $avg['first']['win'] 
 				)
 				{
+						$bad = 0;
 						$num = 0;	
 						$result = 1;
 						foreach($my_array as $name)
@@ -113,6 +114,11 @@ function model3($param, $odd, $unfinish)
 								}
 									
 							}
+							else
+							{
+								$bad = 1;
+								break;
+							}
 						}
 						if($result == 0)
 						{
@@ -125,10 +131,38 @@ function model3($param, $odd, $unfinish)
 						}
 						elseif($score[0] > $score[1])	// home lose
 						{
+								if($bad == 1)
+									return 0;
+						echo "model3:".$param['num']." ";
+								foreach($my_array as $name)
+								{
+									$first_win = $all[$name]['first']['win'];
+									$first_draw = $all[$name]['first']['draw'];
+									$first_lost = $all[$name]['first']['lost'];
+									$end_win = $all[$name]['end']['win'];
+									$end_draw = $all[$name]['end']['draw'];
+									$end_lost = $all[$name]['end']['lost'];
+									echo "$first_win $first_draw $first_lost $end_win $end_draw $end_lost ";
+								}
+								echo "$score[0] $score[1]\n";
 								return 0;
 						}
 						else
 						{
+								if($bad == 1)
+									return 1;
+						echo "model3:".$param['num']." ";
+								foreach($my_array as $name)
+								{
+									$first_win = $all[$name]['first']['win'];
+									$first_draw = $all[$name]['first']['draw'];
+									$first_lost = $all[$name]['first']['lost'];
+									$end_win = $all[$name]['end']['win'];
+									$end_draw = $all[$name]['end']['draw'];
+									$end_lost = $all[$name]['end']['lost'];
+									echo "$first_win $first_draw $first_lost $end_win $end_draw $end_lost ";
+								}
+								echo "$score[0] $score[1]\n";
 								return 1;
 						}
 				}
@@ -180,6 +214,10 @@ function model3($param, $odd, $unfinish)
 									*/
 								}
 							}			
+							else
+							{
+								$bad = 1;
+							}
 						}
 						if($result == 0)
 						{
@@ -192,10 +230,42 @@ function model3($param, $odd, $unfinish)
 						}
 						elseif($score[1] > $score[0])
 						{
+								if($bad == 1)
+									return 0;
+						echo "model3:".$param['num']." ";
+								foreach($my_array as $name)
+								{
+									if(!isset($all[$name]))
+										break;
+									$first_win = $all[$name]['first']['win'];
+									$first_draw = $all[$name]['first']['draw'];
+									$first_lost = $all[$name]['first']['lost'];
+									$end_win = $all[$name]['end']['win'];
+									$end_draw = $all[$name]['end']['draw'];
+									$end_lost = $all[$name]['end']['lost'];
+									echo "$first_win $first_draw $first_lost $end_win $end_draw $end_lost ";
+								}
+								echo "$score[0] $score[1]\n";
 								return 0;
 						}
 						else
 						{
+								if($bad == 1)
+									return 1;
+						echo "model3:".$param['num']." ";
+								foreach($my_array as $name)
+								{
+									if(!isset($all[$name]))
+										break;
+									$first_win = $all[$name]['first']['win'];
+									$first_draw = $all[$name]['first']['draw'];
+									$first_lost = $all[$name]['first']['lost'];
+									$end_win = $all[$name]['end']['win'];
+									$end_draw = $all[$name]['end']['draw'];
+									$end_lost = $all[$name]['end']['lost'];
+									echo "$first_win $first_draw $first_lost $end_win $end_draw $end_lost ";
+								}
+								echo "$score[0] $score[1]\n";
 								return 1;
 						}
 				}
@@ -462,35 +532,31 @@ function model2($param, $odd, $unfinish)
 				{
 						$num = 0;	
 						$result = 1;
+						$bad = 0;
 						foreach($my_array as $name)
 						{
 							if(isset($all[$name]))
 							{
+								$num++;
 								if(!($all[$name]['end']['win'] > $all[$name]['first']['win'] &&
 									$all[$name]['end']['lost'] < $all[$name]['first']['lost'])
 								)
 								{
-									if($name == '威廉希尔' || $name=='澳门' || $name=='立博' || $name == 'Interwetten')
+									//$result = 0;
+									//break;
+									/*
+									if($name == '威廉希尔' || $name=='澳门' || $name=='立博')
 									{
 										$result = 0;
 										break;
 									}
+									*/
 								}
-									
 							}
-								if(!($all[$name]['end']['draw'] <= $all[$name]['first']['draw']))
-								{       
-									//if($name == 'Interwetten' || $name == 'Bet365' || $name == '威廉希尔')
-									if($name == 'Interwetten')
-									{       
-										$num++; 
-										if($num == 1)
-										{       
-											$result = 0;
-											break;  
-										}       
-									}       
-								} 
+							else
+							{
+								$bad = 1;
+							}
 						}
 						if($result == 0)
 						{
@@ -503,10 +569,42 @@ function model2($param, $odd, $unfinish)
 						}
 						elseif($score[0] > $score[1])	// home win
 						{
+								if($bad == 1)
+									return 0;
+						echo "model2:".$param['num']." ";
+								foreach($my_array as $name)
+								{
+									if(!isset($all[$name]))
+										break;
+									$first_win = $all[$name]['first']['win'];
+									$first_draw = $all[$name]['first']['draw'];
+									$first_lost = $all[$name]['first']['lost'];
+									$end_win = $all[$name]['end']['win'];
+									$end_draw = $all[$name]['end']['draw'];
+									$end_lost = $all[$name]['end']['lost'];
+									echo "$first_win $first_draw $first_lost $end_win $end_draw $end_lost ";
+								}
+								echo "0\n";
 								return 0;
 						}
 						else
 						{
+								if($bad == 1)
+									return 1;
+						echo "model2:".$param['num']." ";
+								foreach($my_array as $name)
+								{
+									if(!isset($all[$name]))
+										break;
+									$first_win = $all[$name]['first']['win'];
+									$first_draw = $all[$name]['first']['draw'];
+									$first_lost = $all[$name]['first']['lost'];
+									$end_win = $all[$name]['end']['win'];
+									$end_draw = $all[$name]['end']['draw'];
+									$end_lost = $all[$name]['end']['lost'];
+									echo "$first_win $first_draw $first_lost $end_win $end_draw $end_lost ";
+								}
+								echo "1\n";
 								return 1;
 						}
 				}
@@ -525,30 +623,26 @@ function model2($param, $odd, $unfinish)
 						{
 							if(isset($all[$name]))
 							{
+								$num++;
 								if(!($all[$name]['end']['win'] < $all[$name]['first']['win'] &&
 									$all[$name]['end']['lost'] > $all[$name]['first']['lost'])
 								)
 								{
-									if($name == '威廉希尔' || $name=='澳门' || $name=='立博' || $name == 'Interwetten')
+									/*
+									$result = 0;
+									break;
+									if($name == '威廉希尔' || $name=='澳门' || $name=='立博')
 									{
 										$result = 0;
 										break;
 									}
+									*/
 								}
-							}			
-                                if(!($all[$name]['end']['draw'] <= $all[$name]['first']['draw']))
-                                {
-                                    //if($name == 'Interwetten' || $name == 'Bet365' || $name == '威廉希尔')
-                                    if($name == 'Interwetten')
-                                    {
-                                        $num++;
-                                        if($num==1)
-                                        {
-                                            $result = 0;
-                                            break;
-                                        }
-									}
-								}
+							}		
+							else
+							{
+								$bad = 1;
+							}
 						}
 						if($result == 0)
 						{
@@ -561,10 +655,42 @@ function model2($param, $odd, $unfinish)
 						}
 						elseif($score[1] > $score[0])// away win
 						{
+								if($bad == 1)
+									return 0;
+						echo "model2:".$param['num']." ";
+								foreach($my_array as $name)
+								{
+									if(!isset($all[$name]))
+										break;
+									$first_win = $all[$name]['first']['win'];
+									$first_draw = $all[$name]['first']['draw'];
+									$first_lost = $all[$name]['first']['lost'];
+									$end_win = $all[$name]['end']['win'];
+									$end_draw = $all[$name]['end']['draw'];
+									$end_lost = $all[$name]['end']['lost'];
+									echo "$first_win $first_draw $first_lost $end_win $end_draw $end_lost ";
+								}
+								echo "0\n";
 								return 0;
 						}
 						else
 						{
+								if($bad == 1)
+									return 0;
+						echo "model2:".$param['num']." ";
+								foreach($my_array as $name)
+								{
+									if(!isset($all[$name]))
+										break;
+									$first_win = $all[$name]['first']['win'];
+									$first_draw = $all[$name]['first']['draw'];
+									$first_lost = $all[$name]['first']['lost'];
+									$end_win = $all[$name]['end']['win'];
+									$end_draw = $all[$name]['end']['draw'];
+									$end_lost = $all[$name]['end']['lost'];
+									echo "$first_win $first_draw $first_lost $end_win $end_draw $end_lost ";
+								}
+								echo "1\n";
 								return 1;
 						}
 				}
@@ -625,7 +751,7 @@ function Obser($date, &$good_array, &$bad_array, $unfinish, &$total)
 		$count = 0;
 		foreach($res[1] as $k=>$url)
 		{
-				echo ".";
+				#echo ".";
 				if($count++ > 300)
 				{
 						echo "count > 300 exit..\n";
@@ -655,9 +781,10 @@ function Obser($date, &$good_array, &$bad_array, $unfinish, &$total)
 				$param['url'] = $url;
 				if(!$unfinish && empty($param['score']))
 				{
-						echo "empty score: ".$num[1][0]."\n";
+					#echo "empty score: ".$num[1][0]."\n";
 						continue;
 				}
+				/*
 				$ret = model1($param, $json['list'], $unfinish);
 				if($ret == 1)
 				{
@@ -671,7 +798,8 @@ function Obser($date, &$good_array, &$bad_array, $unfinish, &$total)
 						$bad_array[1][] = $param;
 						$total['model1'][] = $param;
 				}
-
+				*/
+				/*
 				$ret = model2($param, $json['list'], $unfinish);
 				//var_dump($ret);
 				if($ret == 1)
@@ -686,7 +814,7 @@ function Obser($date, &$good_array, &$bad_array, $unfinish, &$total)
 						$bad_array[2][] = $param;
 						$total['model2'][] = $param;
 				}
-
+				*/
 				$ret = model3($param, $json['list'], $unfinish);
 				//var_dump($ret);
 				if($ret == 1)
@@ -701,7 +829,6 @@ function Obser($date, &$good_array, &$bad_array, $unfinish, &$total)
 						$bad_array[3][] = $param;
 						$total['model3'][] = $param;
 				}
-
 		}	
 }
 $start = $argv[1];
@@ -722,11 +849,12 @@ if(time()-$time<60*60*33)
 while($time >= $end_time)
 {
 		$ret = date('Y-m-d', $time);
-		echo "\n";
-		var_dump($ret);
+		#echo "\n";
+		#var_dump($ret);
 		Obser($ret, $good_array, $bad_array, $unfinish, $total);
 		$time-=60*60*24;
 }
+/*
 echo "\n#####################model1:\n";
 echo "bad\n";
 var_dump($bad_array[1]);
@@ -767,4 +895,4 @@ $str_mail = $str_mail."model3 good:\n".str_replace('\\', '', json_encode($good_a
 $str_mail = $str_mail."result:\n".str_replace('\\', '', json_encode($res_array))."\n";
 $ret = mail('xiesicong@baidu.com,241092598@qq.com', 'result', $str_mail);
 var_dump($ret);
-
+*/
