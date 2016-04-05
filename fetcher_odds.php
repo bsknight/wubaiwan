@@ -144,7 +144,9 @@ function model3($param, $odd, $unfinish)
 									$end_lost = $all[$name]['end']['lost'];
 									echo "$first_win $first_draw $first_lost $end_win $end_draw $end_lost ";
 								}
-								echo "$score[0] $score[1]\n";
+								echo "$score[0] $score[1] ";
+								$rang = cal_yazhi($param, $type);
+								echo "$rang\n";
 								return 0;
 						}
 						else
@@ -162,7 +164,9 @@ function model3($param, $odd, $unfinish)
 									$end_lost = $all[$name]['end']['lost'];
 									echo "$first_win $first_draw $first_lost $end_win $end_draw $end_lost ";
 								}
-								echo "$score[0] $score[1]\n";
+								echo "$score[0] $score[1] ";
+								$rang = cal_yazhi($param, $type);
+								echo "$rang\n";
 								return 1;
 						}
 				}
@@ -245,7 +249,9 @@ function model3($param, $odd, $unfinish)
 									$end_lost = $all[$name]['end']['lost'];
 									echo "$first_win $first_draw $first_lost $end_win $end_draw $end_lost ";
 								}
-								echo "$score[0] $score[1]\n";
+								echo "$score[0] $score[1] ";
+								$rang = cal_yazhi($param, $type);
+								echo "$rang\n";
 								return 0;
 						}
 						else
@@ -265,7 +271,9 @@ function model3($param, $odd, $unfinish)
 									$end_lost = $all[$name]['end']['lost'];
 									echo "$first_win $first_draw $first_lost $end_win $end_draw $end_lost ";
 								}
-								echo "$score[0] $score[1]\n";
+								echo "$score[0] $score[1] ";
+								$rang = cal_yazhi($param, $type);
+								echo "$rang\n";
 								return 1;
 						}
 				}
@@ -296,7 +304,7 @@ function cal_yazhi($param, $type)
 				//var_dump($m['last']['handi']);
 				if(in_array($m['last']['handi'], $pankou))
 				{
-					$rang = $rangqiu[$m['last']['handi']]+0.25;
+					$rang = $rangqiu[$m['last']['handi']];
 				}
 				return $rang;
 			}
