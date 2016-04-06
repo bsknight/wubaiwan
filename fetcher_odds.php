@@ -592,7 +592,7 @@ function model2($param, $odd, $unfinish)
 									$end_lost = $all[$name]['end']['lost'];
 									echo "$first_win $first_draw $first_lost $end_win $end_draw $end_lost ";
 								}
-								echo "0\n";
+								echo "0 $score[0] $score[1]\n";
 								return 0;
 						}
 						else
@@ -612,7 +612,7 @@ function model2($param, $odd, $unfinish)
 									$end_lost = $all[$name]['end']['lost'];
 									echo "$first_win $first_draw $first_lost $end_win $end_draw $end_lost ";
 								}
-								echo "1\n";
+								echo "1 $score[0] $score[1]\n";
 								return 1;
 						}
 				}
@@ -807,7 +807,6 @@ function Obser($date, &$good_array, &$bad_array, $unfinish, &$total)
 						$total['model1'][] = $param;
 				}
 				*/
-				/*
 				$ret = model2($param, $json['list'], $unfinish);
 				//var_dump($ret);
 				if($ret == 1)
@@ -822,7 +821,7 @@ function Obser($date, &$good_array, &$bad_array, $unfinish, &$total)
 						$bad_array[2][] = $param;
 						$total['model2'][] = $param;
 				}
-				*/
+				/*
 				$ret = model3($param, $json['list'], $unfinish);
 				//var_dump($ret);
 				if($ret == 1)
@@ -837,6 +836,7 @@ function Obser($date, &$good_array, &$bad_array, $unfinish, &$total)
 						$bad_array[3][] = $param;
 						$total['model3'][] = $param;
 				}
+				*/
 		}	
 }
 $start = $argv[1];
