@@ -390,6 +390,7 @@ print(book.Start.home, book.Start.draw, book.Start.away)
 print('欧赔终盘')
 print(book.End.home, book.End.draw, book.End.away)
 print('竞彩官方')
+print(drawArray['竞彩官方'].Start.home,drawArray['竞彩官方'].Start.draw,drawArray['竞彩官方'].Start.away)
 print(drawArray['竞彩官方'].End.home,drawArray['竞彩官方'].End.draw,drawArray['竞彩官方'].End.away)
 interwetten(array, book, homelow)
 --coral(array, drawArray, drawBook)
@@ -413,7 +414,7 @@ if (book.Start.home > book.Start.away and book.End.home < book.End.away) or
             end
         end
     end 
-
+	--[[
     i = draw5companys(array, drawArray, drawBook)
     if i >= 3 then
         print('五家平赔模式匹配通过，平局概率降低')
@@ -421,7 +422,7 @@ if (book.Start.home > book.Start.away and book.End.home < book.End.away) or
             print('平半盘五家平赔可能失效')
         end
     end
-
+	--]]
     print(win,draw,lose)  
     return
 else if  book.Start.home < book.Start.away then
@@ -438,7 +439,7 @@ end
 if array['威廉希尔'].Start.draw < array['澳门彩票'].Start.draw then
     print("威廉希尔平赔低于澳门，关注冷门，五家平赔模式失效，博天堂冷赔模式失效！")
     draw = weilianxier(array, book)
-
+	--[[
     i = draw5companys(array, drawArray, drawBook)
     if i >= 3 then
         print('五家平赔模式匹配通过，平局概率降低')
@@ -446,7 +447,7 @@ if array['威廉希尔'].Start.draw < array['澳门彩票'].Start.draw then
             print('平半盘五家平赔可能失效')
         end
     end
-
+	--]]
     if homelow == 1 then
         lose = botiantang(array, book, homelow)
         --win = libo(array, book, homelow)
@@ -456,7 +457,7 @@ if array['威廉希尔'].Start.draw < array['澳门彩票'].Start.draw then
     end     
 else
     draw = weilianxier(array, book)
-
+	--[[	
     i = draw5companys(array, drawArray, drawBook)
     if i >= 3 then
         print('五家平赔模式匹配通过，平局概率降低')
@@ -464,7 +465,7 @@ else
             print('平半盘五家平赔可能失效')
         end
     end
-
+	--]]
     if homelow == 1 then
         lose = botiantang(array, book, homelow)
         --win = libo(array, book, homelow)
