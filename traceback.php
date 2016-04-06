@@ -56,6 +56,12 @@ while(!feof($fdr))
     $avg['first']['lost'] /= $count;
     $avg['end']['lost'] /= $count;
     $res = $items[$i];
+	$home = $items[$i+1];
+	$away = $items[$i+2];
+	if($home == $away)
+	{
+		echo "draw $home $away \n";
+	}
     if($res == 1)
     {
         $win++;

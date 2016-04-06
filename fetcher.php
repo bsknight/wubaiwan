@@ -69,6 +69,12 @@ function model3($param, $odd, $unfinish)
 		}
 		if($type == 'homelow')
 		{
+				$rang = cal_yazhi($param, $type);
+				$param['rang'] = $rang;
+				if($rang < 1)
+				{
+					return 2;
+				}
 				if( 
 					$avg['first']['win'] < 1.9 && 
 					$avg['end']['win'] < 1.98 && 
@@ -135,6 +141,12 @@ function model3($param, $odd, $unfinish)
 		}
 		elseif($type == 'awaylow')
 		{
+				$rang = cal_yazhi($param, $type);
+				$param['rang'] = $rang;
+				if($rang < 1)
+				{
+					return 2;
+				}
 				if(
 					$avg['first']['lost'] < 1.9 && 
 					$avg['end']['lost'] < 1.98 && 
@@ -226,7 +238,7 @@ function cal_yazhi($param, $type)
 				//var_dump($m['last']['handi']);
 				if(in_array($m['last']['handi'], $pankou))
 				{
-					$rang = $rangqiu[$m['last']['handi']]+0.25;
+					$rang = $rangqiu[$m['last']['handi']];
 				}
 				return $rang;
 			}
@@ -323,6 +335,7 @@ function model1(&$param, $odd, $unfinish)
 								$all['Interwetten']['end']['draw'] > $all['Interwetten']['first']['draw'] 
 										)
 										{
+												$rang = 0;
 												$rang = cal_yazhi($param, $type);
 												$param['rang'] = $rang;
 												if($rang < 1 && $rang!=0 && !$unfinish)

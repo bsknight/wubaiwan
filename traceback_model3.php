@@ -57,8 +57,8 @@ while(!feof($fdr))
     $avg['end']['lost'] /= $count;
     $res[0] = $items[$i];
     $res[1] = $items[$i+1];
-    $rang = $items[$i+2];
-    if($rang == 0)
+    $rang = $items[$i+2]-0.25;
+    if($rang < 1)
         continue;
     $right[$num] = model3($all, $res, $avg, $rang, $mailcontent);
 }
@@ -68,14 +68,14 @@ foreach($right as $k=>$v)
 {
     if($v === 1)
     {
-        //echo "win ";
-        //var_dump($k);
+        echo "win ";
+        var_dump($k);
         $win++;
     }
     elseif($v === 0)
     {
-        //echo "lost ";
-        //var_dump($k);
+        echo "lost ";
+        var_dump($k);
         $mailcontent['error'][] =
         "http://odds.500.com/fenxi/ouzhi-".str_replace('model3:','',$k).".shtml";
         $lost++;
@@ -84,12 +84,47 @@ foreach($right as $k=>$v)
 var_dump($win);
 var_dump($lost);
 $ret = mail('xiesicong@baidu.com,241092598@qq.com', 'result', str_replace('\\', '',json_encode($mailcontent)));
+function cal_yazhi($param, $type)
+{
+        $url = "http://m.500.com/info/index.php?c=detail&a=yazhiAjax&r=1&fid=".$param['num'];
+        $tmp = curl_get_contents($url);
+        $tmp = json_decode($tmp,true);
+        $rang = 0;
+
+        if($type == "homelow")
+        {
+                $pankou = array("半球/一球","一球","一球/球半","球半","球半/两球","两球");
+                $rangqiu = array("半球/一球"=>0.75,"一球"=>1,"一球/球半"=>1.25,"球半"=>1.5,"球半/两球"=>1.75,"两球"=>2);
+        }
+        elseif($type == "awaylow")
+        {
+                $pankou = array("受半球/一球","受一球","受一球/球半","受球半","受球半/两球","受两球");
+                $rangqiu = array("受半球/一球"=>0.75,"受一球"=>1,"受一球/球半"=>1.25,"受球半"=>1.5,"受球半/两球"=>1.75,"受两球"=>2);
+        }
+        foreach($tmp['list'] as $m)
+        {
+            if($m['name'] == '伟德')
+            {
+                //var_dump($m['last']['handi']);
+                if(in_array($m['last']['handi'], $pankou))
+                {
+                    $rang = $rangqiu[$m['last']['handi']];
+                }
+                return $rang;
+            }
+        }
+        return 0;
+}
 function model3($all, $res, $avg, $rang, &$mailcontent)
 {
         $my_array = array("威廉希尔","澳门","立博","Bet365","Interwetten","SNAI","伟德","Bwin","Coral","SportingBet(博天堂)");
         $type = $avg['first']['win'] < $avg['first']['lost']? 'homelow':'awaylow';
         if($type == 'homelow')
         {
+                if($rang < 1)
+                {
+                    return 2;
+                }
                 if(
                     $avg['first']['win'] < 1.9 &&
                     $avg['end']['win'] < 1.98 &&
@@ -110,12 +145,14 @@ function model3($all, $res, $avg, $rang, &$mailcontent)
                                 {
                                     $num++;
                                     //if($name == '威廉希尔' || $name=='澳门' || $name=='立博')
-                                    if($name == "Interwetten")
+                                    /*
+									if($name == "Interwetten")
                                     {
                                         $result = 0;
                                         break;
                                     }
-                                    if($num >= 1)
+									*/
+                                    if($num >= 3)
                                     {
                                         $result = 0;
                                         break;
@@ -134,12 +171,13 @@ function model3($all, $res, $avg, $rang, &$mailcontent)
                                     }
                                     */
                                 }
+								/*
                                 if($all['威廉希尔']['first']['draw'] > $avg['first']['draw'])
                                 {
                                     $result = 0;
                                     break;
                                 }
-
+								*/
                             }
                         }
                         if($result == 0)
@@ -163,6 +201,10 @@ function model3($all, $res, $avg, $rang, &$mailcontent)
         }
         elseif($type == 'awaylow')
         {
+                if($rang < 1)
+                {
+                    return 2;
+                }
                 if(
                     $avg['first']['lost'] < 1.9 &&
                     $avg['end']['lost'] < 1.98 &&
@@ -183,12 +225,14 @@ function model3($all, $res, $avg, $rang, &$mailcontent)
                                 )
                                 {
                                     $num++;
+									/*
                                     if($name == "Interwetten")
                                     {
                                         $result = 0;
                                         break;
                                     }
-                                    if($num >= 1)
+									*/
+                                    if($num >= 3)
                                     {
                                         $result = 0;
                                         break;
@@ -207,11 +251,13 @@ function model3($all, $res, $avg, $rang, &$mailcontent)
                                     }
                                     */
                                 }
+								/*
                                 if($all['威廉希尔']['first']['draw'] > $avg['first']['draw'])
                                 {
                                     $result = 0;
                                     break;
                                 }
+								*/
                             }
                         }
                         if($result == 0)
