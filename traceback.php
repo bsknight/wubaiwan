@@ -60,7 +60,9 @@ while(!feof($fdr))
 	$away = $items[$i+2];
 	if($home == $away)
 	{
-		echo "draw $home $away \n";
+		//echo "draw $home $away \n";
+		$draw++;
+		continue;
 	}
     if($res == 1)
     {
@@ -70,9 +72,13 @@ while(!feof($fdr))
     {
         $lost++;
     }
-    $right[$num] = model2($all, $res, $avg, $mailcontent);
+    $right[$num] = model2($all, $res, $avg, $mailcontent, $home, $away);
 }
+echo "win:";
 var_dump($win);
+echo " draw:";
+var_dump($draw);
+echo " lost:";
 var_dump($lost);
 $win = 0;
 $lost = 0;
@@ -94,10 +100,12 @@ foreach($right as $k=>$v)
     }
 }
 var_dump($mailcontent);
+echo "win:";
 var_dump($win);
+echo " lost:";
 var_dump($lost);
 $ret = mail('xiesicong@baidu.com,241092598@qq.com', 'result', str_replace('\\', '',json_encode($mailcontent)));
-function model2($all, $res, $avg, &$mailcontent)
+function model2($all, $res, $avg, &$mailcontent, $home, $away)
 {
         $my_array = array("威廉希尔","澳门","立博","Bet365","Interwetten","SNAI","伟德","Bwin","Coral","SportingBet(博天堂)");
         $type = $avg['first']['win'] < $avg['first']['lost']? 'homelow':'awaylow';
@@ -177,6 +185,10 @@ function model2($all, $res, $avg, &$mailcontent)
                         {
                             return 2;
                         }
+						if($home == $away)
+						{
+							//return 2;
+						}
                         if($res != 1)   // home win
                         {
                                 return 0;
@@ -264,6 +276,10 @@ function model2($all, $res, $avg, &$mailcontent)
                         {
                             return 2;
                         }
+						if($home == $away)
+						{
+							//return 2;
+						}
                         if($res == 0)// away win
                         {
                                 return 0;

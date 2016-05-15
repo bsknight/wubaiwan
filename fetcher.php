@@ -612,6 +612,8 @@ function Obser($date, &$good_array, &$bad_array, $unfinish, &$total)
 		global $debug;
 		global $debugnum;
 		$url = "http://trade.500.com/jczq/?playtype=nspf&date=".$date;
+		//$url = "http://trade.500.com/bjdc/";
+		//$unfinish = 1;
 		//var_dump($url);
 		$contents = curl_get_contents($url);
 		$str = mb_convert_encoding($contents, 'UTF-8', 'GBK');

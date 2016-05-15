@@ -737,7 +737,6 @@ function Obser($date, &$good_array, &$bad_array, $unfinish, &$total)
 		$contents = curl_get_contents($url);
 		$str = mb_convert_encoding($contents, 'UTF-8', 'GBK');
 		$tmp = $str;
-		//var_dump($str);	
 		preg_match_all('/<a.href\="(http[^\"]+fenxi\/ouzhi[^\"]+)"/', $tmp, $out, PREG_PATTERN_ORDER);
 		//var_dump($out);
 		/*
