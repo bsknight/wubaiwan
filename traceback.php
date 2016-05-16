@@ -62,7 +62,6 @@ while(!feof($fdr))
 	{
 		//echo "draw $home $away \n";
 		$draw++;
-		continue;
 	}
     if($res == 1)
     {
@@ -125,6 +124,7 @@ function model2($all, $res, $avg, &$mailcontent, $home, $away)
                             if(isset($all[$name]))
                             {
                                 if(!($all[$name]['end']['win'] > $all[$name]['first']['win'] &&
+                                    //$all[$name]['end']['draw'] <= $all[$name]['first']['draw'] &&
                                     $all[$name]['end']['lost'] < $all[$name]['first']['lost'] 
                                     )
                                 )
@@ -146,21 +146,20 @@ function model2($all, $res, $avg, &$mailcontent, $home, $away)
                                         break;
                                 }
                                 */
-                                if(!($all[$name]['end']['draw'] <= $all[$name]['first']['draw']))
+                                if(!($all[$name]['end']['draw'] < $all[$name]['first']['draw']))
                                 {
                                     //if($name == 'Interwetten' || $name == 'Bet365' || $name == '威廉希尔')
-                                    if($name == 'Interwetten')
-                                    {
-                                        $result = 0;
-                                        break;
-                                        /*
+                                    //if($name == 'Interwetten' || )
+									if($name == '威廉希尔' || $name == 'Interwetten' || $name=='伟德')
+									//if($name == 'Interwetten' || $name=='伟德')
+                                    {	
                                         $num++;
-                                        if($num == 1)
+                                        if($num >= 2)
                                         {
                                             $result = 0;
                                             break;
                                         }
-                                        */
+                                        
                                         if($res == 1)
                                         {
                                             echo "error ";
@@ -215,6 +214,7 @@ function model2($all, $res, $avg, &$mailcontent, $home, $away)
                             if(isset($all[$name]))
                             {
                                 if(!($all[$name]['end']['win'] < $all[$name]['first']['win'] &&
+                                    //$all[$name]['end']['draw'] <= $all[$name]['first']['draw'] && 
                                     $all[$name]['end']['lost'] > $all[$name]['first']['lost'] 
                                     )
                                 )
@@ -236,21 +236,19 @@ function model2($all, $res, $avg, &$mailcontent, $home, $away)
                                         break;
                                 }
                                 */
-                                if(!($all[$name]['end']['draw'] <= $all[$name]['first']['draw']))
+                                if(!($all[$name]['end']['draw'] < $all[$name]['first']['draw']))
                                 {
                                     //if($name == 'Interwetten' || $name == 'Bet365' || $name == '威廉希尔')
-                                    if($name == 'Interwetten')
-                                    {
-                                        $result = 0;
-                                        break;
-                                        /*
+                                    //if($name == 'Interwetten')
+                                    if($name == '威廉希尔' || $name == 'Interwetten' || $name=='伟德')
+									//if($name == 'Interwetten' || $name=='伟德')
+									{
                                         $num++;
-                                        if($num==1)
+                                        if($num >= 2)
                                         {
                                             $result = 0;
                                             break;
                                         }
-                                        */
                                         if($res == 1)
                                         {
                                             echo "error ";
