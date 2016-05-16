@@ -779,7 +779,7 @@ var_dump(count($bad_array[3]));
 echo "good\n";
 var_dump(count($good_array[3]));
 //var_dump($total);
-$str_mail = $start."-".$end."\n";
+$str_mail = $argv[1]."-".$argv[2]."\n";
 $str_mail = $str_mail."model1 bad:\n".str_replace('\\', '', json_encode($bad_array[1]))."\n";
 $str_mail = $str_mail."model1 good:\n".str_replace('\\', '', json_encode($good_array[1]))."\n";
 $str_mail = $str_mail."model2 bad:\n".str_replace('\\', '', json_encode($bad_array[2]))."\n";
