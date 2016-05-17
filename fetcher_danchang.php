@@ -495,8 +495,6 @@ function model2($param, $odd, $unfinish)
 								if(!($all[$name]['end']['draw'] < $all[$name]['first']['draw']))
 								{       
 									//if($name == 'Interwetten' || $name == 'Bet365' || $name == '威廉希尔')
-									//if($name == 'Interwetten')
-									//if($name == 'Interwetten' || $name=='伟德')
 									if($name == '威廉希尔' || $name == 'Interwetten' || $name=='伟德')
 									{       
 										$num++; 
@@ -557,9 +555,8 @@ function model2($param, $odd, $unfinish)
                                 {
                                     //if($name == 'Interwetten' || $name == 'Bet365' || $name == '威廉希尔')
                                     //if($name == 'Interwetten')
-                                    //if($name == 'Interwetten' || $name=='伟德')
 									if($name == '威廉希尔' || $name == 'Interwetten' || $name=='伟德')
-									{
+                                    {
                                         $num++;
                                         if($num >= 2)
                                         {
@@ -593,6 +590,7 @@ function model2($param, $odd, $unfinish)
 
 function curl_get_contents($url)
 {
+		global $curlError;
 		$headerArr = array(
 						'Accept-Language: en'
 						);
@@ -601,7 +599,7 @@ function curl_get_contents($url)
 		$ch = curl_init();
 		curl_setopt($ch, CURLOPT_URL, $url);            //设置访问的url地址
 		//curl_setopt($ch,CURLOPT_HEADER,1);            //是否显示头部信息
-		curl_setopt($ch, CURLOPT_TIMEOUT, 50);           //设置超时
+		curl_setopt($ch, CURLOPT_TIMEOUT, 500);           //设置超时
 		curl_setopt($ch, CURLOPT_USERAGENT, $userAgent);   //用户访问代理 User-Agent
 		curl_setopt($ch, CURLOPT_REFERER,$url);        //设置 referer
 		//curl_setopt($ch, CURLINFO_HEADER_OUT, 1);
@@ -610,6 +608,9 @@ function curl_get_contents($url)
 		curl_setopt($ch,CURLOPT_FOLLOWLOCATION,1);      //跟踪301
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);        //返回结果
 		$r = curl_exec($ch);
+		if(curl_errno($ch)){
+			$curlError[] = curl_error($ch);
+        }   
 		curl_close($ch);
 		return $r;
 }
@@ -624,6 +625,7 @@ function Obser($date, &$good_array, &$bad_array, $unfinish, &$total)
 		//var_dump($url);
 		$url = "http://live.500.com/zqdc.php?e=".$date;
 		$contents = curl_get_contents($url);
+
 		$str = mb_convert_encoding($contents, 'UTF-8', 'GBK');
 		$tmp = $str;
 		preg_match_all('/<a.+href\="(http[^\"]+fenxi\/ouzhi[^\"]+)"/', $tmp, $out, PREG_PATTERN_ORDER);
@@ -643,6 +645,7 @@ function Obser($date, &$good_array, &$bad_array, $unfinish, &$total)
 		$scoreurl="http://m.500.com/info/live/?c=detail&fid=";
 		$odd = array();
 		$count = 0;
+
 		foreach($res[1] as $k=>$url)
 		{
 				echo ".";
@@ -706,7 +709,7 @@ function Obser($date, &$good_array, &$bad_array, $unfinish, &$total)
 						$bad_array[2][] = $param;
 						$total['model2'][] = $param;
 				}
-				
+
 				$ret = model3($param, $json['list'], $unfinish);
 				//var_dump($ret);
 				if($ret == 1)
@@ -733,6 +736,7 @@ date_default_timezone_set("Asia/Shanghai");
 $bad_array = array();
 $good_array = array();
 $total = array();
+$curlError = array();
 $unfinish = 1;
 /*
 if(time()-$time<60*60*33)
@@ -787,6 +791,7 @@ $str_mail = $str_mail."model2 good:\n".str_replace('\\', '', json_encode($good_a
 $str_mail = $str_mail."model3 bad:\n".str_replace('\\', '', json_encode($bad_array[3]))."\n";
 $str_mail = $str_mail."model3 good:\n".str_replace('\\', '', json_encode($good_array[3]))."\n";
 $str_mail = $str_mail."result:\n".str_replace('\\', '', json_encode($res_array))."\n";
+$str_mail = $str_mail."curl_error:\n".str_replace('\\', '', json_encode($curlError))."\n";
 $ret = mail('xiesicong@baidu.com,241092598@qq.com', 'result', $str_mail);
 var_dump($ret);
 
