@@ -483,7 +483,7 @@ function model2($param, $odd, $unfinish)
 									$all[$name]['end']['lost'] < $all[$name]['first']['lost'])
 								)
 								{
-									if($name == '威廉希尔' || $name=='澳门' || $name=='立博' || $name == 'Interwetten')
+									if($name == '威廉希尔' || $name == 'Interwetten' || $name=='伟德')
 									{
 										$result = 0;
 										break;
@@ -491,13 +491,12 @@ function model2($param, $odd, $unfinish)
 								}
 									
 							}
-								if(!($all[$name]['end']['draw'] <= $all[$name]['first']['draw']))
+								if(!($all[$name]['end']['draw'] < $all[$name]['first']['draw']))
 								{       
-									//if($name == 'Interwetten' || $name == 'Bet365' || $name == '威廉希尔')
-									if($name == 'Interwetten')
+									if($name == '威廉希尔' || $name == 'Interwetten' || $name=='伟德')
 									{       
 										$num++; 
-										if($num == 1)
+										if($num >= 2)
 										{       
 											$result = 0;
 											break;  
@@ -542,7 +541,7 @@ function model2($param, $odd, $unfinish)
 									$all[$name]['end']['lost'] > $all[$name]['first']['lost'])
 								)
 								{
-									if($name == '威廉希尔' || $name=='澳门' || $name=='立博' || $name == 'Interwetten')
+									if($name == '威廉希尔' || $name == 'Interwetten' || $name=='伟德')
 									{
 										$result = 0;
 										break;
@@ -551,11 +550,10 @@ function model2($param, $odd, $unfinish)
 							}			
                                 if(!($all[$name]['end']['draw'] <= $all[$name]['first']['draw']))
                                 {
-                                    //if($name == 'Interwetten' || $name == 'Bet365' || $name == '威廉希尔')
-                                    if($name == 'Interwetten')
+									if($name == '威廉希尔' || $name == 'Interwetten' || $name=='伟德')
                                     {
                                         $num++;
-                                        if($num==1)
+                                        if($num >= 2)
                                         {
                                             $result = 0;
                                             break;
@@ -673,6 +671,7 @@ function Obser($date, &$good_array, &$bad_array, $unfinish, &$total)
 						echo "empty score: ".$num[1][0]."\n";
 						continue;
 				}
+				/*
 				$ret = model1($param, $json['list'], $unfinish);
 				if($ret == 1)
 				{
@@ -686,7 +685,7 @@ function Obser($date, &$good_array, &$bad_array, $unfinish, &$total)
 						$bad_array[1][] = $param;
 						$total['model1'][] = $param;
 				}
-
+				*/
 				$ret = model2($param, $json['list'], $unfinish);
 				//var_dump($ret);
 				if($ret == 1)
@@ -773,8 +772,8 @@ echo "good\n";
 var_dump(count($good_array[3]));
 //var_dump($total);
 $str_mail = $start."-".$end."\n";
-$str_mail = $str_mail."model1 bad:\n".str_replace('\\', '', json_encode($bad_array[1]))."\n";
-$str_mail = $str_mail."model1 good:\n".str_replace('\\', '', json_encode($good_array[1]))."\n";
+//$str_mail = $str_mail."model1 bad:\n".str_replace('\\', '', json_encode($bad_array[1]))."\n";
+//$str_mail = $str_mail."model1 good:\n".str_replace('\\', '', json_encode($good_array[1]))."\n";
 $str_mail = $str_mail."model2 bad:\n".str_replace('\\', '', json_encode($bad_array[2]))."\n";
 $str_mail = $str_mail."model2 good:\n".str_replace('\\', '', json_encode($good_array[2]))."\n";
 $str_mail = $str_mail."model3 bad:\n".str_replace('\\', '', json_encode($bad_array[3]))."\n";
