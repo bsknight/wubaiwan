@@ -548,7 +548,7 @@ function model2($param, $odd, $unfinish)
 									}
 								}
 							}			
-                                if(!($all[$name]['end']['draw'] <= $all[$name]['first']['draw']))
+                                if(!($all[$name]['end']['draw'] < $all[$name]['first']['draw']))
                                 {
 									if($name == '威廉希尔' || $name == 'Interwetten' || $name=='伟德')
                                     {
@@ -593,7 +593,7 @@ function curl_get_contents($url)
 		$ch = curl_init();
 		curl_setopt($ch, CURLOPT_URL, $url);            //设置访问的url地址
 		//curl_setopt($ch,CURLOPT_HEADER,1);            //是否显示头部信息
-		curl_setopt($ch, CURLOPT_TIMEOUT, 10);           //设置超时
+		curl_setopt($ch, CURLOPT_TIMEOUT, 500);           //设置超时
 		curl_setopt($ch, CURLOPT_USERAGENT, $userAgent);   //用户访问代理 User-Agent
 		//curl_setopt($ch, CURLINFO_HEADER_OUT, 1);
 		//curl_setopt($ch, CURLOPT_REFERER,_REFERER_);        //设置 referer
