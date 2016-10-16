@@ -1,19 +1,5 @@
 <?php
-/***************************************************************************
- * 
- * Copyright (c) 2014 Baidu.com, Inc. All Rights Reserved
- * 
- **************************************************************************/
- 
- 
- 
-/**
- * @file php/gen_general_conf.php
- * @author zhaowuyuan(com@baidu.com)
- * @date 2014/07/11 13:34:32
- * @brief 
- *  
- **/
+date_default_timezone_set("Asia/Shanghai");
 $file1=$argv[1];
 $fdr = fopen($file1,"r");
 $win = 0;
@@ -58,6 +44,7 @@ while(!feof($fdr))
     $res = $items[$i];
 	$home = $items[$i+1];
 	$away = $items[$i+2];
+    $time = $items[$i+3];
 	if($home == $away)
 	{
 		//echo "draw $home $away \n";
@@ -71,7 +58,21 @@ while(!feof($fdr))
     {
         $lost++;
     }
-    $right[$num] = model2($all, $res, $avg, $mailcontent, $home, $away);
+    /*
+    $match_num = explode(":", $all['num']);
+	$url = "http://m.500.com/info/live/?c=detail&fid=".$match_num[1];
+	var_dump($url);
+    $contents = curl_get_contents($url);
+    $str = mb_convert_encoding($contents, 'UTF-8', 'GBK');
+	$tmp = $str;
+    var_dump($tmp);
+    #preg_match_all('/<a.+href\="(http[^\"]+fenxi\/ouzhi[^\"]+)"/', $tmp, $out, PREG_PATTERN_ORDER);
+    #preg_match_all('/jl-sfont">(.+\s..\:..)<\/span>/', $tmp, $out, PREG_PATTERN_ORDER);
+    preg_match_all('/jl-sfont">(.+)<\/span>/', $tmp, $out, PREG_PATTERN_ORDER);
+    var_dump($out);
+    */
+    $right[$num]['res'] = model2($all, $res, $avg, $mailcontent, $home, $away);
+    $right[$num]['time'] = $time;
 }
 echo "win:";
 var_dump($win);
@@ -81,18 +82,19 @@ echo " lost:";
 var_dump($lost);
 $win = 0;
 $lost = 0;
+uasort($right, 'cmp');
 foreach($right as $k=>$v)
 {
-    if($v === 1)
+    if($v['res'] === 1)
     {
         echo "win ";
-        var_dump($k);
+        echo $k." ".date('Y-m-j h:m:s', $v['time'])."\n";
         $win++;
     }
-    elseif($v === 0)
+    elseif($v['res'] === 0)
     {
         echo "lost ";
-        var_dump($k);
+        echo $k." ".date('Y-m-j h:m:s', $v['time'])."\n";
         $mailcontent['error'][] =
         "http://odds.500.com/fenxi/ouzhi-".str_replace('model2:','',$k).".shtml";
         $lost++;
@@ -123,11 +125,9 @@ function model2($all, $res, $avg, &$mailcontent, $home, $away)
                         {
                             if(isset($all[$name]))
                             {
-                                if(!($all[$name]['end']['win'] > $all[$name]['first']['win'] &&
+                            		if(!($all[$name]['end']['win'] > $all[$name]['first']['win'] &&
                                     //$all[$name]['end']['draw'] <= $all[$name]['first']['draw'] &&
-                                    $all[$name]['end']['lost'] < $all[$name]['first']['lost'] 
-                                    )
-                                )
+                                    $all[$name]['end']['lost'] < $all[$name]['first']['lost'] ))
                                 {
                                     //$result = 0;
                                     //break;
@@ -162,8 +162,8 @@ function model2($all, $res, $avg, &$mailcontent, $home, $away)
                                         
                                         if($res == 1)
                                         {
-                                            echo "error ";
-                                            var_dump($all['num']);
+                                            //echo "error ";
+                                            //var_dump($all['num']);
                                             $mailcontent['interwetten filter'][] =
                                             "http://odds.500.com/fenxi/ouzhi-".str_replace('model2:','',$all['num']).".shtml";
                                         }
@@ -251,8 +251,8 @@ function model2($all, $res, $avg, &$mailcontent, $home, $away)
                                         }
                                         if($res == 1)
                                         {
-                                            echo "error ";
-                                            var_dump($all['num']);
+                                            //echo "error ";
+                                            //var_dump($all['num']);
                                             $mailcontent['interwetten filter'][] =
                                             "http://odds.500.com/fenxi/ouzhi-".str_replace('model2:','',$all['num']).".shtml";
                                         }
@@ -291,6 +291,34 @@ function model2($all, $res, $avg, &$mailcontent, $home, $away)
         return 2;
 }
 
+function cmp($a, $b) {
+    if ($a['time'] == $b['time']) {
+        return 0;
+    }
+    return ($a['time'] < $b['time']) ? -1 : 1;
+}
 
+function curl_get_contents($url)
+{
+        $headerArr = array(
+                        'Accept-Language: en'
+                        );
+        $userAgent = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/45.0.2454.85 Safari/537.36';
+        $userAgent = 'Mozilla/5.0 (iPhone; CPU iPhone OS 8_0 like Mac OS X) AppleWebKit/600.1.3 (KHTML, like Gecko) Version/8.0 Mobile/12A4345d Safari/600.1.4';
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, $url);            //设置访问的url地址
+        //curl_setopt($ch,CURLOPT_HEADER,1);            //是否显示头部信息
+        curl_setopt($ch, CURLOPT_TIMEOUT, 10);           //设置超时
+        curl_setopt($ch, CURLOPT_USERAGENT, $userAgent);   //用户访问代理 User-Agent
+        curl_setopt($ch, CURLOPT_REFERER, $url);        //设置 referer
+        //curl_setopt($ch, CURLINFO_HEADER_OUT, 1);
+        //curl_setopt($ch, CURLOPT_REFERER,_REFERER_);        //设置 referer
+        //curl_setopt ($ch, CURLOPT_HTTPHEADER , $headerArr);
+        curl_setopt($ch,CURLOPT_FOLLOWLOCATION,1);      //跟踪301
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);        //返回结果
+        $r = curl_exec($ch);
+        curl_close($ch);
+        return $r;
+}
 /* vim: set expandtab ts=4 sw=4 sts=4 tw=100: */
 ?>

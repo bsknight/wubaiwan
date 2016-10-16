@@ -645,7 +645,6 @@ function Obser($date, &$good_array, &$bad_array, $unfinish, &$total)
 		$scoreurl="http://m.500.com/info/live/?c=detail&fid=";
 		$odd = array();
 		$count = 0;
-
 		foreach($res[1] as $k=>$url)
 		{
 				echo ".";
@@ -656,7 +655,7 @@ function Obser($date, &$good_array, &$bad_array, $unfinish, &$total)
 				}
 				preg_match("/ouzhi\-(.+)\./", $url, $num, PREG_OFFSET_CAPTURE, 0);
 				$url = $oupei.$num[1][0];
-				
+				//$url = $oupei."560756";
 				if($debug==1 && $num[1][0] != $debugnum)
 				{
 						continue;
@@ -667,7 +666,7 @@ function Obser($date, &$good_array, &$bad_array, $unfinish, &$total)
 				//$url = "http://m.500.com/info/index.php?c=detail&a=ouzhiAjax&r=1&fid=529024";
 				$contents = curl_get_contents($url);
 				$json = json_decode($contents, true);
-
+//var_dump($json);
 				$url = $scoreurl.$num[1][0];
 				$tmp = curl_get_contents($url);
 				//var_dump($tmp);
@@ -709,7 +708,7 @@ function Obser($date, &$good_array, &$bad_array, $unfinish, &$total)
 						$bad_array[2][] = $param;
 						$total['model2'][] = $param;
 				}
-
+				/*
 				$ret = model3($param, $json['list'], $unfinish);
 				//var_dump($ret);
 				if($ret == 1)
@@ -724,6 +723,7 @@ function Obser($date, &$good_array, &$bad_array, $unfinish, &$total)
 						$bad_array[3][] = $param;
 						$total['model3'][] = $param;
 				}
+				*/
 
 		}	
 }
