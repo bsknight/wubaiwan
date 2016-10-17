@@ -490,8 +490,6 @@ function model2($param, $odd, $unfinish)
 										break;
 									}
 								}
-									
-							}
 								if(!($all[$name]['end']['draw'] < $all[$name]['first']['draw']))
 								{       
 									//if($name == 'Interwetten' || $name == 'Bet365' || $name == '威廉希尔')
@@ -505,8 +503,15 @@ function model2($param, $odd, $unfinish)
 										}       
 									}       
 								} 
+									
+							}
+                            else
+                            {
+                                $bad = 1;
+                                break;
+                            }
 						}
-						if($result == 0)
+						if($result == 0 || $bad == 1)
 						{
 							return 2;
 						}
@@ -550,7 +555,6 @@ function model2($param, $odd, $unfinish)
 										break;
 									}
 								}
-							}			
                                 if(!($all[$name]['end']['draw'] < $all[$name]['first']['draw']))
                                 {
                                     //if($name == 'Interwetten' || $name == 'Bet365' || $name == '威廉希尔')
@@ -565,8 +569,14 @@ function model2($param, $odd, $unfinish)
                                         }
 									}
 								}
+							}			
+                            else
+                            {
+                                $bad = 1;
+                                break;
+                            }
 						}
-						if($result == 0)
+						if($result == 0 || $bad == 1)
 						{
 							return 2;
 						}

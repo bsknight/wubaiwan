@@ -43,12 +43,12 @@ function model2($param, $odd, $unfinish)
 				}
 		}
 
-		$avg['first']['win'] /= $count;
-		$avg['end']['win'] /= $count;
-		$avg['first']['draw'] /= $count;
-		$avg['end']['draw'] /= $count;
-		$avg['first']['lost'] /= $count;
-		$avg['end']['lost'] /= $count;
+		@$avg['first']['win'] /= $count;
+		@$avg['end']['win'] /= $count;
+		@$avg['first']['draw'] /= $count;
+		@$avg['end']['draw'] /= $count;
+		@$avg['first']['lost'] /= $count;
+		@$avg['end']['lost'] /= $count;
 		//var_dump($avg);
 		$type = $avg['first']['win'] < $avg['first']['lost']? 'homelow':'awaylow';
 
@@ -90,10 +90,12 @@ function model2($param, $odd, $unfinish)
 									*/
 								}
 							}
+                            /*
 							else
 							{
 								$bad = 1;
 							}
+                            */
 						}
 						if($result == 0)
 						{
@@ -112,7 +114,14 @@ function model2($param, $odd, $unfinish)
 								foreach($my_array as $name)
 								{
 									if(!isset($all[$name]))
-										break;
+								    {
+                                        $all[$name]['first']['win'] = 0;
+                                        $all[$name]['first']['draw'] = 0;
+                                        $all[$name]['first']['lost'] = 0;
+                                        $all[$name]['end']['win'] = 0;
+                                        $all[$name]['end']['draw'] = 0;
+                                        $all[$name]['end']['lost'] = 0;
+                                    }
 									$first_win = $all[$name]['first']['win'];
 									$first_draw = $all[$name]['first']['draw'];
 									$first_lost = $all[$name]['first']['lost'];
@@ -132,7 +141,14 @@ function model2($param, $odd, $unfinish)
 								foreach($my_array as $name)
 								{
 									if(!isset($all[$name]))
-										break;
+								    {
+                                        $all[$name]['first']['win'] = 0;
+                                        $all[$name]['first']['draw'] = 0;
+                                        $all[$name]['first']['lost'] = 0;
+                                        $all[$name]['end']['win'] = 0;
+                                        $all[$name]['end']['draw'] = 0;
+                                        $all[$name]['end']['lost'] = 0;
+                                    }
 									$first_win = $all[$name]['first']['win'];
 									$first_draw = $all[$name]['first']['draw'];
 									$first_lost = $all[$name]['first']['lost'];
@@ -176,10 +192,12 @@ function model2($param, $odd, $unfinish)
 									*/
 								}
 							}		
+                            /*
 							else
 							{
 								$bad = 1;
 							}
+                            */
 						}
 						if($result == 0)
 						{
@@ -198,7 +216,14 @@ function model2($param, $odd, $unfinish)
 								foreach($my_array as $name)
 								{
 									if(!isset($all[$name]))
-										break;
+								    {
+                                        $all[$name]['first']['win'] = 0;
+                                        $all[$name]['first']['draw'] = 0;
+                                        $all[$name]['first']['lost'] = 0;
+                                        $all[$name]['end']['win'] = 0;
+                                        $all[$name]['end']['draw'] = 0;
+                                        $all[$name]['end']['lost'] = 0;
+                                    }
 									$first_win = $all[$name]['first']['win'];
 									$first_draw = $all[$name]['first']['draw'];
 									$first_lost = $all[$name]['first']['lost'];
@@ -218,7 +243,14 @@ function model2($param, $odd, $unfinish)
 								foreach($my_array as $name)
 								{
 									if(!isset($all[$name]))
-										break;
+								    {
+                                        $all[$name]['first']['win'] = 0;
+                                        $all[$name]['first']['draw'] = 0;
+                                        $all[$name]['first']['lost'] = 0;
+                                        $all[$name]['end']['win'] = 0;
+                                        $all[$name]['end']['draw'] = 0;
+                                        $all[$name]['end']['lost'] = 0;
+                                    }
 									$first_win = $all[$name]['first']['win'];
 									$first_draw = $all[$name]['first']['draw'];
 									$first_lost = $all[$name]['first']['lost'];

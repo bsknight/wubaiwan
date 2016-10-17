@@ -18,6 +18,12 @@ while(!feof($fdr))
     $my_array = array("威廉希尔","澳门","立博","Bet365","Interwetten","SNAI","伟德","Bwin","Coral","SportingBet(博天堂)");
     foreach($my_array as $comp)
     {
+        if($items[$i] == 0)
+        {
+            //echo $num." ".$comp."\n";
+            $i = $i + 6;
+            continue;
+        }
         $all['num'] = $num;
         $all[$comp]['first']['win'] = $items[$i];
         $all[$comp]['first']['draw'] = $items[$i+1];
@@ -76,9 +82,9 @@ while(!feof($fdr))
 }
 echo "win:";
 var_dump($win);
-echo " draw:";
+echo "draw:";
 var_dump($draw);
-echo " lost:";
+echo "lost:";
 var_dump($lost);
 $win = 0;
 $lost = 0;
@@ -100,12 +106,12 @@ foreach($right as $k=>$v)
         $lost++;
     }
 }
-var_dump($mailcontent);
+//var_dump($mailcontent);
 echo "win:";
 var_dump($win);
-echo " lost:";
+echo "lost:";
 var_dump($lost);
-$ret = mail('xiesicong@baidu.com,241092598@qq.com', 'result', str_replace('\\', '',json_encode($mailcontent)));
+//$ret = mail('xiesicong@baidu.com,241092598@qq.com', 'result', str_replace('\\', '',json_encode($mailcontent)));
 function model2($all, $res, $avg, &$mailcontent, $home, $away)
 {
         $my_array = array("威廉希尔","澳门","立博","Bet365","Interwetten","SNAI","伟德","Bwin","Coral","SportingBet(博天堂)");
@@ -121,13 +127,18 @@ function model2($all, $res, $avg, &$mailcontent, $home, $away)
                         $num = 0;
                         $result = 1;
                         $bad = 0;
+                        $num1 = 0;
                         foreach($my_array as $name)
                         {
                             if(isset($all[$name]))
                             {
-                            		if(!($all[$name]['end']['win'] > $all[$name]['first']['win'] &&
+                                if(!($all[$name]['end']['win'] > $all[$name]['first']['win'] &&
                                     //$all[$name]['end']['draw'] <= $all[$name]['first']['draw'] &&
-                                    $all[$name]['end']['lost'] < $all[$name]['first']['lost'] ))
+                                    $all[$name]['end']['lost'] < $all[$name]['first']['lost']  
+                                    //&& $all[$name]['end']['lost'] < $all[$name]['end']['win'] 
+                                    //&& $all[$name]['first']['lost'] > $all[$name]['first']['win'] 
+                                    )
+                                )
                                 {
                                     //$result = 0;
                                     //break;
@@ -164,16 +175,16 @@ function model2($all, $res, $avg, &$mailcontent, $home, $away)
                                         {
                                             //echo "error ";
                                             //var_dump($all['num']);
-                                            $mailcontent['interwetten filter'][] =
-                                            "http://odds.500.com/fenxi/ouzhi-".str_replace('model2:','',$all['num']).".shtml";
+                                            //$mailcontent['bad'][] =
+                                            //"http://odds.500.com/fenxi/ouzhi-".str_replace('model2:','',$all['num']).".shtml";
                                         }
                                     }
                                 }
                             }
                             else
                             {
-                                $num++;
-                                if($num < 5)
+                                $num1++;
+                                if($num1 >= 1)
                                 {
                                     $bad =1;
                                     break;
@@ -209,6 +220,7 @@ function model2($all, $res, $avg, &$mailcontent, $home, $away)
                         $num = 0;
                         $result = 1;
                         $bad = 0;
+                        $num1 = 0;
                         foreach($my_array as $name)
                         {
                             if(isset($all[$name]))
@@ -216,6 +228,8 @@ function model2($all, $res, $avg, &$mailcontent, $home, $away)
                                 if(!($all[$name]['end']['win'] < $all[$name]['first']['win'] &&
                                     //$all[$name]['end']['draw'] <= $all[$name]['first']['draw'] && 
                                     $all[$name]['end']['lost'] > $all[$name]['first']['lost'] 
+                                    //&& $all[$name]['end']['lost'] > $all[$name]['end']['win'] 
+                                    //&& $all[$name]['first']['lost'] < $all[$name]['first']['win'] 
                                     )
                                 )
                                 {
@@ -253,8 +267,8 @@ function model2($all, $res, $avg, &$mailcontent, $home, $away)
                                         {
                                             //echo "error ";
                                             //var_dump($all['num']);
-                                            $mailcontent['interwetten filter'][] =
-                                            "http://odds.500.com/fenxi/ouzhi-".str_replace('model2:','',$all['num']).".shtml";
+                                            //$mailcontent['interwetten filter'][] =
+                                            //"http://odds.500.com/fenxi/ouzhi-".str_replace('model2:','',$all['num']).".shtml";
                                         }
                                     }
                                 }
@@ -262,8 +276,8 @@ function model2($all, $res, $avg, &$mailcontent, $home, $away)
                             }
                             else
                             {
-                                $num++;
-                                if($num < 5)
+                                $num1++;
+                                if($num1 >= 1)
                                 {
                                     $bad =1;
                                     break;
