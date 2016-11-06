@@ -184,7 +184,7 @@ function model2($all, $res, $avg, &$mailcontent, $home, $away)
                             else
                             {
                                 $num1++;
-                                if($num1 >= 1)
+                                if($num1 >= 2)
                                 {
                                     $bad =1;
                                     break;
@@ -277,7 +277,7 @@ function model2($all, $res, $avg, &$mailcontent, $home, $away)
                             else
                             {
                                 $num1++;
-                                if($num1 >= 1)
+                                if($num1 >= 2)
                                 {
                                     $bad =1;
                                     break;
