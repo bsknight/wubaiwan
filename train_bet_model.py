@@ -28,13 +28,13 @@ except ImportError:
     import pickle
 import numpy as np
 from pandas import DataFrame
-import matplotlib.pyplot as plt
-import seaborn as sns
 from sklearn.model_selection import learning_curve
 from sklearn.model_selection import ShuffleSplit
-from matplotlib import offsetbox
 from sklearn import (manifold, datasets, decomposition, ensemble,
                      discriminant_analysis, random_projection)
+#from matplotlib import offsetbox
+#import matplotlib.pyplot as plt
+#import seaborn as sns
 
 reload(sys)
 sys.setdefaultencoding('utf8')
@@ -278,6 +278,12 @@ def gen_corpus(filename):
             data[num] = {}
             courpus_line = []
             bad = 0
+            first_win = 0
+            first_draw = 0
+            first_lost = 0
+            end_win = 0
+            end_draw = 0
+            end_lost = 0
             #courpus_line.append(num)
             for comp in comp_array:
                 if items[i] == '0':
@@ -298,26 +304,73 @@ def gen_corpus(filename):
                 data[num][comp]['end']['win'] = float(items[i+3]);
                 data[num][comp]['end']['draw'] = float(items[i+4]);
                 data[num][comp]['end']['lost'] = float(items[i+5]);
+                
+                first_win += float(items[i]);
+                first_draw += float(items[i+1]);
+                first_lost += float(items[i+2]);
+                end_win += float(items[i+3]);
+                end_draw += float(items[i+4]);
+                end_lost += float(items[i+5]);
+                
+                '''
+                a = abs(float('%.2f' % ( float(items[i])-float(items[i+3]) ) ))
+                b = abs(float('%.2f' % ( float(items[i+1])-float(items[i+4]) ) ))
+                c = abs(float('%.2f' % ( float(items[i+2])-float(items[i+5]) ) )) 
+                if a<0 or b<0 or c<0:
+                    print num, data[num][comp], a, b, c
+                    bad = 1
+                    break
+                if items[i] < items[i+3] :
+                    courpus_line.append(a)
+                    courpus_line.append(b)
+                    courpus_line.append(c)
+                else:
+                    courpus_line.append(c)
+                    courpus_line.append(b)
+                    courpus_line.append(a)
+                '''
                 courpus_line.append(float(items[i]))
                 courpus_line.append(float(items[i+1]))
                 courpus_line.append(float(items[i+2]))
                 courpus_line.append(float(items[i+3]))
                 courpus_line.append(float(items[i+4]))
                 courpus_line.append(float(items[i+5]))
+                
                 i = i + 6;
                 #print comp,data[comp]
                 count = count + 1
             if bad == 1:
                 continue
+            data[num]['avg'] = {}
+            data[num]['avg']['first'] = {}
+            data[num]['avg']['end'] = {}
+            data[num]['avg']['first']['win'] = float( '%.2f' % (first_win/count) );
+            data[num]['avg']['first']['draw'] = float( '%.2f' % (first_draw/count) );
+            data[num]['avg']['first']['lost'] = float( '%.2f' % (first_lost/count) );
+            data[num]['avg']['end']['win'] = float( '%.2f' % (end_win/count) );
+            data[num]['avg']['end']['draw'] = float( '%.2f' % (end_draw/count) );
+            data[num]['avg']['end']['lost'] = float( '%.2f' % (end_lost/count) );
+            
             data[num]['res'] = int(items[i])
             data[num]['home'] = float(items[i+1])
             data[num]['away'] = float(items[i+2])
             data[num]['time'] = float(items[i+3])
             #courpus_line.append(int(items[i+1]))
             #courpus_line.append(int(items[i+2]))
+            
+            courpus_line.append(data[num]['avg']['first']['win'])
+            courpus_line.append(data[num]['avg']['first']['draw'])
+            courpus_line.append(data[num]['avg']['first']['lost'])
+            courpus_line.append(data[num]['avg']['end']['win'])
+            courpus_line.append(data[num]['avg']['end']['draw'])
+            courpus_line.append(data[num]['avg']['end']['lost'])
+            
+            #print num, courpus_line
+            
             target.append(int(items[i]))
             courpus.append(courpus_line)
-    #print courpus[231],target[231]
+
+    print courpus[231],target[231]
     return courpus,target
 
 def process(corpus, target):
@@ -368,10 +421,6 @@ def process(corpus, target):
     print X_test.shape
     
     #dimension_reduce(X_train, y_train)
-    tsne = manifold.TSNE(n_components=2, init='pca', random_state=0)
-    t0 = time()
-    X_tsne = tsne.fit_transform(X_train)
-    X_tsne_test = tsne.fit_transform(X_test)
     
     score_type = 'precision'
     print "CV score:",score_type
