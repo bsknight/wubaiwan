@@ -296,8 +296,8 @@ function Obser($date, &$good_array, &$bad_array, $unfinish, &$total)
 				//var_dump($tmp);
 				preg_match('/d-game-time\"\>(\d+\&nbsp;:\&nbsp;\d+)</', $tmp, $out, PREG_OFFSET_CAPTURE);
 				$param['score'] = str_replace("&nbsp;", "", $out[1][0]);
-                //if($param['score'] != "")
-                //    continue;
+                if($param['score'] != "")
+                    continue;
 				$param['num'] = $num[1][0];
 				$param['url'] = $url;
 				if(!$unfinish && empty($param['score']))
