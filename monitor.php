@@ -394,11 +394,11 @@ $str_mail = $str_mail."model2 good:\n".str_replace('\\', '', json_encode($good_a
 $str_mail = $str_mail."model3 bad:\n".str_replace('\\', '', json_encode($bad_array[3]))."\n";
 $str_mail = $str_mail."model3 good:\n".str_replace('\\', '', json_encode($good_array[3]))."\n";
 */
-var_dump($str_mail);
 if( !get_redis_conn() )
 {
     $str_mail = $str_mail."connect redis failed!\n";
 }
+var_dump(count($res_array['model2']));
 foreach($res_array['model2'] as $k=>$tmp)
 {
     $num = substr($tmp,-6,6);
