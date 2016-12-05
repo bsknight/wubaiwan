@@ -5,6 +5,8 @@ $fdr = fopen($file1,"r");
 $win = 0;
 $lost = 0;
 $mailcontent = array();
+$filter_win = 0;
+$filter_lost = 0;
 while(!feof($fdr))
 {
     $line = fgets($fdr);
@@ -77,7 +79,7 @@ while(!feof($fdr))
     preg_match_all('/jl-sfont">(.+)<\/span>/', $tmp, $out, PREG_PATTERN_ORDER);
     var_dump($out);
     */
-    $right[$num]['res'] = model2($all, $res, $avg, $mailcontent, $home, $away);
+    $right[$num]['res'] = model2($all, $res, $avg, $mailcontent, $home, $away, $num);
     $right[$num]['time'] = $time;
 }
 echo "win:";
@@ -112,8 +114,55 @@ var_dump($win);
 echo "lost:";
 var_dump($lost);
 //$ret = mail('xiesicong@baidu.com,241092598@qq.com', 'result', str_replace('\\', '',json_encode($mailcontent)));
-function model2($all, $res, $avg, &$mailcontent, $home, $away)
+var_dump($filter_win);
+var_dump($filter_lost);
+function get_yapan($num, $type)
 {
+        $url = "http://m.500.com/info/index.php?c=detail&a=yazhiAjax&r=1&fid=".$num;
+        $tmp = curl_get_contents($url);
+        $tmp = json_decode($tmp,true);
+        $rang = 0;
+        /*
+        if($type == "homelow")
+        {
+                $pankou = array("半球/一球","一球","一球/球半","球半","球半/两球","两球");
+                $rangqiu = array("半球/一球"=>0.75,"一球"=>1,"一球/球半"=>1.25,"球半"=>1.5,"球半/两球"=>1.75,"两球"=>2);
+        }
+        elseif($type == "awaylow")
+        {
+                $pankou = array("受半球/一球","受一球","受一球/球半","受球半","受球半/两球","受两球");
+                $rangqiu = array("受半球/一球"=>0.75,"受一球"=>1,"受一球/球半"=>1.25,"受球半"=>1.5,"受球半/两球"=>1.75,"受两球"=>2);
+        }
+        */
+        //var_dump($url);
+        if($type == 'homelow')
+        {
+            $index = 'away';
+        }
+        else
+        {
+            $index = 'home';
+        }
+        //var_dump($index);
+        foreach($tmp['list'] as $m)
+        {
+            if($m['name'] == '伟德')
+            {
+                //var_dump($m['last']['handi']);
+                if($m['last']['handi'] == "平手")
+                {
+                    //$rang = $rangqiu[$m['last']['handi']];
+                    return $m['last'][$index];
+                }
+                //return $rang;
+            }
+        }
+        return 0;
+}
+function model2($all, $res, $avg, &$mailcontent, $home, $away, $game_num)
+{
+        global $filter_win;
+        global $filter_lost;
         $my_array = array("威廉希尔","澳门","立博","Bet365","Interwetten","SNAI","伟德","Bwin","Coral","SportingBet(博天堂)");
         $type = $avg['first']['win'] < $avg['first']['lost']? 'homelow':'awaylow';
         if($type == 'homelow')
@@ -184,16 +233,45 @@ function model2($all, $res, $avg, &$mailcontent, $home, $away)
                             else
                             {
                                 $num1++;
-                                if($num1 >= 2)
+                                if($num1 >= 1)
                                 {
                                     $bad =1;
                                     break;
                                 }
                             }
                         }
+
                         if($result == 0 || $bad == 1)
                         {
                             return 2;
+                        }
+                        $yapei = (float)get_yapan($game_num, $type);
+                        if($yapei != 0)
+                        {
+                            $oupei = (float)$all['伟德']['end']['draw'];
+                            $profit = $yapei/( ($oupei-1)+1+($yapei) ) * ($oupei-1);
+                            /*
+                            var_dump($game_num);
+                            var_dump($yapei);
+                            var_dump($oupei);
+                            var_dump($profit);
+                            */
+                            if($profit < 0.408)
+                            {
+                                if($res != 1)   // home win
+                                {
+                                    $filter_lost++;       
+                                }
+                                else
+                                {
+                                    $filter_win++;
+                                }
+                                return 2;
+                            }
+                        }
+                        else
+                        {
+                            //return 2;
                         }
 						if($home == $away)
 						{
@@ -277,7 +355,7 @@ function model2($all, $res, $avg, &$mailcontent, $home, $away)
                             else
                             {
                                 $num1++;
-                                if($num1 >= 2)
+                                if($num1 >= 1)
                                 {
                                     $bad =1;
                                     break;
@@ -288,6 +366,36 @@ function model2($all, $res, $avg, &$mailcontent, $home, $away)
                         {
                             return 2;
                         }
+
+                        $yapei = (float)get_yapan($game_num, $type);
+                        if($yapei != 0)
+                        {
+                            $oupei = (float)$all['伟德']['end']['draw'];
+                            $profit = $yapei/( ($oupei-1)+1+($yapei) ) * ($oupei-1);
+                            /*
+                            var_dump($game_num);
+                            var_dump($yapei);
+                            var_dump($oupei);
+                            var_dump($profit);
+                            */
+                            if($profit < 0.408)
+                            {
+                                if($res == 0)   // away win
+                                {
+                                    $filter_lost++;       
+                                }
+                                else
+                                {
+                                    $filter_win++;
+                                }
+                                return 2;
+                            }
+                        }
+                        else
+                        {
+                            //return 2;
+                        }
+
 						if($home == $away)
 						{
 							//return 2;
