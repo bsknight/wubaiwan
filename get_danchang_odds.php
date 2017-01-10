@@ -3,6 +3,58 @@ $debug=0;
 $debugnum='511343';
 $res_array = array();
 $link="http://m.500.com/info/index.php?c=detail&fid=";
+
+function get_okooo_yapan($danchangnum, $date, $type)
+{
+        $url = "http://www.okooo.com/livecenter/danchang/?date=".$date;
+        $tmp = curl_get_contents($url);
+		$str = mb_convert_encoding($tmp, 'UTF-8', 'GBK');
+		preg_match_all('/matchid="([0-9]+)".+\n.+<span>'.$danchangnum.'<\/span>/', $str, $out, PREG_PATTERN_ORDER);
+        $okooo_num = $out[1][0];
+        $url = "http://www.okooo.com/soccer/match/$okooo_num/ah/";
+        $tmp = curl_get_contents($url);
+		$str = mb_convert_encoding($tmp, 'UTF-8', 'GBK');
+		preg_match_all('/data_str=\'(.+)\'/', $str, $out, PREG_PATTERN_ORDER);
+        $odds = json_decode($out[1][0], true);
+
+        if(!empty($odds))
+        {
+            foreach($odds as $comp)
+            {
+                if($comp['CompanyName'] == '伟德国际')
+                {
+                    if($comp['End']['boundary'] == "0.00")
+                    {
+                        $yapan['home'] = $comp['End']['home'];
+                        $yapan['away'] = $comp['End']['away'];
+                    }
+                    else
+                    {
+                        if(!isset($comp['Secondary']))
+                        {
+                            break;
+                        }
+                        foreach($comp['Secondary'] as $content)
+                        {
+                            if($content['Boundary'] == "0")
+                            {
+                                $yapan['home'] = $content['End']['home'];
+                                $yapan['away'] = $content['End']['away'];
+                            }
+                        }
+                    }
+                    break;
+                }
+            }
+        }
+        if(empty($yapan))
+        {
+            $yapan['home'] = "0.00";
+            $yapan['away'] = "0.00";
+        }
+        $yapan['okooo_num'] = $okooo_num;
+        return $yapan;
+}
 function model2($param, $odd, $unfinish)
 {
 		global $link;
@@ -13,7 +65,9 @@ function model2($param, $odd, $unfinish)
 		$score[0] = intval($score[0]);
 		$score[1] = intval($score[1]);
 		$time = strtotime($param['year']."-".$param['time']);
-		$my_array = array("威廉希尔","澳门","立博","Bet365","Interwetten","SNAI","伟德","Bwin","Coral","SportingBet (博天堂)");
+        $danchangnum = $param['danchangnum'];
+        $date = $param['date'];
+		$my_array = array("威廉希尔","澳门","立博","Bet365","Interwetten","SNAI","伟德","Bwin","Coral","SportingBet (博天堂)","Pinnacle平博","皇冠","易胜博","利记","Unibet (优胜客)","Mansion88 (明升)","金宝博","香港马会","Eurobet","10BET","Gamebookers","平博");
 		$all = array();
 		$avg['first'] = array();
 		$avg['end'] = array();
@@ -61,15 +115,19 @@ function model2($param, $odd, $unfinish)
 
 		if($type == 'homelow')
 		{
+                if(1)
+                /*
 				if($avg['end']['win'] > 2.05 && 
 					$avg['first']['win'] > 2.01 && 
 					$avg['end']['win'] > $avg['first']['win'] &&
 					$avg['end']['win'] > $avg['end']['lost']
 				)
+                */
 				{
 						$num = 0;	
 						$result = 1;
 						$bad = 0;
+                        /*
 						foreach($my_array as $name)
 						{
 							if(isset($all[$name]))
@@ -81,26 +139,23 @@ function model2($param, $odd, $unfinish)
 								{
 									//$result = 0;
 									//break;
-									/*
 									if($name == '威廉希尔' || $name=='澳门' || $name=='立博')
 									{
 										$result = 0;
 										break;
 									}
-									*/
 								}
 							}
-                            /*
 							else
 							{
 								$bad = 1;
 							}
-                            */
 						}
 						if($result == 0)
 						{
 							return 2;
 						}
+                        */
 						if($unfinish)
 						{
 								echo $param['num']."\n";
@@ -108,19 +163,17 @@ function model2($param, $odd, $unfinish)
 						}
 						elseif($score[0] > $score[1])	// home win
 						{
-								if($bad == 1)
-									return 0;
 								echo $param['num']." ";
 								foreach($my_array as $name)
 								{
 									if(!isset($all[$name]))
 								    {
-                                        $all[$name]['first']['win'] = 0;
-                                        $all[$name]['first']['draw'] = 0;
-                                        $all[$name]['first']['lost'] = 0;
-                                        $all[$name]['end']['win'] = 0;
-                                        $all[$name]['end']['draw'] = 0;
-                                        $all[$name]['end']['lost'] = 0;
+                                        $all[$name]['first']['win'] = "0.00";
+                                        $all[$name]['first']['draw'] = "0.00";
+                                        $all[$name]['first']['lost'] = "0.00";
+                                        $all[$name]['end']['win'] = "0.00";
+                                        $all[$name]['end']['draw'] = "0.00";
+                                        $all[$name]['end']['lost'] = "0.00";
                                     }
 									$first_win = $all[$name]['first']['win'];
 									$first_draw = $all[$name]['first']['draw'];
@@ -130,24 +183,24 @@ function model2($param, $odd, $unfinish)
 									$end_lost = $all[$name]['end']['lost'];
 									echo "$first_win $first_draw $first_lost $end_win $end_draw $end_lost ";
 								}
-								echo "0 $score[0] $score[1] $time\n";
+                                #$yapan = get_okooo_yapan($danchangnum, $date, $type);
+								echo "0 $score[0] $score[1] $time $date $danchangnum\n";
+                                #echo $yapan['okooo_num']." ".$yapan['home']." ".$yapan['away']."\n";
 								return 0;
 						}
 						else
 						{
-								if($bad == 1)
-									return 1;
 								echo $param['num']." ";
 								foreach($my_array as $name)
 								{
 									if(!isset($all[$name]))
 								    {
-                                        $all[$name]['first']['win'] = 0;
-                                        $all[$name]['first']['draw'] = 0;
-                                        $all[$name]['first']['lost'] = 0;
-                                        $all[$name]['end']['win'] = 0;
-                                        $all[$name]['end']['draw'] = 0;
-                                        $all[$name]['end']['lost'] = 0;
+                                        $all[$name]['first']['win'] = "0.00";
+                                        $all[$name]['first']['draw'] = "0.00";
+                                        $all[$name]['first']['lost'] = "0.00";
+                                        $all[$name]['end']['win'] = "0.00";
+                                        $all[$name]['end']['draw'] = "0.00";
+                                        $all[$name]['end']['lost'] = "0.00";
                                     }
 									$first_win = $all[$name]['first']['win'];
 									$first_draw = $all[$name]['first']['draw'];
@@ -157,21 +210,27 @@ function model2($param, $odd, $unfinish)
 									$end_lost = $all[$name]['end']['lost'];
 									echo "$first_win $first_draw $first_lost $end_win $end_draw $end_lost ";
 								}
-								echo "1 $score[0] $score[1] $time\n";
+                                #$yapan = get_okooo_yapan($danchangnum, $date, $type);
+								echo "1 $score[0] $score[1] $time $date $danchangnum\n";
+                                #echo $yapan['okooo_num']." ".$yapan['home']." ".$yapan['away']."\n";
 								return 1;
 						}
 				}
 		}
 		elseif($type == 'awaylow')
 		{
+                if(1)
+                /*
 				if($avg['end']['lost'] > 2.05 && 
 					$avg['first']['lost'] > 2.01 && 
 					$avg['end']['lost'] > $avg['first']['lost'] &&
 					$avg['end']['win'] < $avg['end']['lost']
 				)
+                */
 				{
 						$num = 0;	
 						$result = 1;
+                        /*
 						foreach($my_array as $name)
 						{
 							if(isset($all[$name]))
@@ -181,7 +240,6 @@ function model2($param, $odd, $unfinish)
 									$all[$name]['end']['lost'] > $all[$name]['first']['lost'])
 								)
 								{
-									/*
 									$result = 0;
 									break;
 									if($name == '威廉希尔' || $name=='澳门' || $name=='立博')
@@ -189,20 +247,18 @@ function model2($param, $odd, $unfinish)
 										$result = 0;
 										break;
 									}
-									*/
 								}
 							}		
-                            /*
 							else
 							{
 								$bad = 1;
 							}
-                            */
 						}
 						if($result == 0)
 						{
 							return 2;
 						}
+                        */
 						if($unfinish)
 						{
 								echo $param['num']."\n";
@@ -210,19 +266,17 @@ function model2($param, $odd, $unfinish)
 						}
 						elseif($score[1] > $score[0])// away win
 						{
-								if($bad == 1)
-									return 0;
 								echo $param['num']." ";
 								foreach($my_array as $name)
 								{
 									if(!isset($all[$name]))
 								    {
-                                        $all[$name]['first']['win'] = 0;
-                                        $all[$name]['first']['draw'] = 0;
-                                        $all[$name]['first']['lost'] = 0;
-                                        $all[$name]['end']['win'] = 0;
-                                        $all[$name]['end']['draw'] = 0;
-                                        $all[$name]['end']['lost'] = 0;
+                                        $all[$name]['first']['win'] = "0.00";
+                                        $all[$name]['first']['draw'] = "0.00";
+                                        $all[$name]['first']['lost'] = "0.00";
+                                        $all[$name]['end']['win'] = "0.00";
+                                        $all[$name]['end']['draw'] = "0.00";
+                                        $all[$name]['end']['lost'] = "0.00";
                                     }
 									$first_win = $all[$name]['first']['win'];
 									$first_draw = $all[$name]['first']['draw'];
@@ -232,24 +286,24 @@ function model2($param, $odd, $unfinish)
 									$end_lost = $all[$name]['end']['lost'];
 									echo "$first_win $first_draw $first_lost $end_win $end_draw $end_lost ";
 								}
-								echo "0 $score[0] $score[1] $time\n";
+                                #$yapan = get_okooo_yapan($danchangnum, $date, $type);
+								echo "0 $score[0] $score[1] $time $date $danchangnum\n";
+                                #echo $yapan['okooo_num']." ".$yapan['home']." ".$yapan['away']."\n";
 								return 0;
 						}
 						else
 						{
-								if($bad == 1)
-									return 0;
 								echo $param['num']." ";
 								foreach($my_array as $name)
 								{
 									if(!isset($all[$name]))
 								    {
-                                        $all[$name]['first']['win'] = 0;
-                                        $all[$name]['first']['draw'] = 0;
-                                        $all[$name]['first']['lost'] = 0;
-                                        $all[$name]['end']['win'] = 0;
-                                        $all[$name]['end']['draw'] = 0;
-                                        $all[$name]['end']['lost'] = 0;
+                                        $all[$name]['first']['win'] = "0.00";
+                                        $all[$name]['first']['draw'] = "0.00";
+                                        $all[$name]['first']['lost'] = "0.00";
+                                        $all[$name]['end']['win'] = "0.00";
+                                        $all[$name]['end']['draw'] = "0.00";
+                                        $all[$name]['end']['lost'] = "0.00";
                                     }
 									$first_win = $all[$name]['first']['win'];
 									$first_draw = $all[$name]['first']['draw'];
@@ -259,7 +313,9 @@ function model2($param, $odd, $unfinish)
 									$end_lost = $all[$name]['end']['lost'];
 									echo "$first_win $first_draw $first_lost $end_win $end_draw $end_lost ";
 								}
-								echo "1 $score[0] $score[1] $time\n";
+                                #$yapan = get_okooo_yapan($danchangnum, $date, $type);
+								echo "1 $score[0] $score[1] $time $date $danchangnum\n";
+                                #echo $yapan['okooo_num']." ".$yapan['home']." ".$yapan['away']."\n";
 								return 1;
 						}
 				}
@@ -302,7 +358,8 @@ function Obser($date, &$good_array, &$bad_array, $unfinish, &$total)
 		$tmp = $str;
 		preg_match_all('/<a.+href\="(http[^\"]+fenxi\/ouzhi[^\"]+)"/', $tmp, $out, PREG_PATTERN_ORDER);
 		preg_match_all('/center">(..-.....:..)<\/td>/', $tmp, $times, PREG_PATTERN_ORDER);
-		if(count($times[1]) != count($out[1]))
+		preg_match_all('/check_id.+?>([0-9]+)<\/td>/', $tmp, $danchangnum, PREG_PATTERN_ORDER);
+		if(count($times[1]) != count($out[1]) || count($danchangnum[1])!=count($out[1]))
 		{
 			var_dump($url);
 			exit();
@@ -360,6 +417,8 @@ function Obser($date, &$good_array, &$bad_array, $unfinish, &$total)
 				$param['url'] = $url;
 				$param['year'] = "20".substr($date,0,2);
 				$param['time'] = $times[1][$i];
+                $param['date'] = $date;
+				$param['danchangnum'] = $danchangnum[1][$i];
 				if(!$unfinish && empty($param['score']))
 				{
 					#echo "empty score: ".$num[1][0]."\n";

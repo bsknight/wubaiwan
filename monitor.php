@@ -32,8 +32,8 @@ function model2($param, $odd, $unfinish)
 		$score = explode(":",$param['score']);
 		$score[0] = intval($score[0]);
 		$score[1] = intval($score[1]);
-
-		$my_array = array("威廉希尔","澳门","立博","Bet365","Interwetten","SNAI","伟德","Bwin","Coral","SportingBet (博天堂)","Pinnacle平博");
+        $key_comp = array("香港马会","Coral","易胜博");
+		$my_array = array("威廉希尔","澳门","立博","Bet365","Interwetten","SNAI","伟德","Bwin","Coral","SportingBet (博天堂)","香港马会","易胜博");
 		$all = array();
 		$avg['first'] = array();
 		$avg['end'] = array();
@@ -84,7 +84,8 @@ function model2($param, $odd, $unfinish)
 				if($avg['end']['win'] > 2.05 && 
 					$avg['first']['win'] > 2.01 && 
 					$avg['end']['win'] > $avg['first']['win'] &&
-					$avg['end']['win'] > $avg['end']['lost']
+					$avg['end']['win'] >= $avg['end']['lost']
+                    && $avg['first']['win'] <= $avg['first']['lost']
 				)
 				{
 						$num = 0;	
@@ -94,12 +95,14 @@ function model2($param, $odd, $unfinish)
 							if(isset($all[$name]))
 							{
 								if(!($all[$name]['end']['win'] > $all[$name]['first']['win'] &&
-									$all[$name]['end']['lost'] < $all[$name]['first']['lost'])
+									$all[$name]['end']['lost'] < $all[$name]['first']['lost']
+                                    && $all[$name]['end']['lost'] <= $all[$name]['end']['win']
+                                    )
 								)
 								{
 									//if($name == '威廉希尔' || $name=='澳门' || $name=='立博' || $name == 'Interwetten')
-									if($name == '威廉希尔' || $name == 'Interwetten' || $name=='伟德' || $name=="Pinnacle平博" || $name=="SportingBet (博天堂)" || $name=="立博")
-									{
+									if(in_array($name, $key_comp))
+                                    {
 										$result = 0;
 										break;
 									}
@@ -107,8 +110,9 @@ function model2($param, $odd, $unfinish)
 								if(!($all[$name]['end']['draw'] < $all[$name]['first']['draw']))
 								{       
 									//if($name == 'Interwetten' || $name == 'Bet365' || $name == '威廉希尔')
-									if($name == '威廉希尔' || $name == 'Interwetten' || $name=='伟德' || $name=="Pinnacle平博")
-									{       
+									//if($name == '威廉希尔' || $name == 'Interwetten' || $name=='伟德' || $name=="Pinnacle平博")
+									if(in_array($name, $key_comp))
+                                    {       
 										$num++; 
 										if($num >= 1)
 										{       
@@ -121,8 +125,11 @@ function model2($param, $odd, $unfinish)
 							}
                             else
                             {
-                                $bad = 1;
-                                break;
+                                if(in_array($name, $key_comp))
+                                {
+                                    $bad = 1;
+                                    break;
+                                }
                             }
 						}
 						if($result == 0 || $bad == 1)
@@ -149,7 +156,8 @@ function model2($param, $odd, $unfinish)
 				if($avg['end']['lost'] > 2.05 && 
 					$avg['first']['lost'] > 2.01 && 
 					$avg['end']['lost'] > $avg['first']['lost'] &&
-					$avg['end']['win'] < $avg['end']['lost']
+					$avg['end']['win'] <= $avg['end']['lost']
+                    && $avg['first']['win'] >= $avg['first']['lost']
 				)
 				{
 						$num = 0;	
@@ -159,13 +167,15 @@ function model2($param, $odd, $unfinish)
 							if(isset($all[$name]))
 							{
 								if(!($all[$name]['end']['win'] < $all[$name]['first']['win'] &&
-									$all[$name]['end']['lost'] > $all[$name]['first']['lost'])
+									$all[$name]['end']['lost'] > $all[$name]['first']['lost']
+                                    && $all[$name]['end']['lost'] >= $all[$name]['end']['win'])
 								)
 								{
 									//if($name == '威廉希尔' || $name=='澳门' || $name=='立博' || $name == 'Interwetten')
 									//if($name == '威廉希尔' || $name == 'Interwetten' || $name=='伟德')
-									if($name == '威廉希尔' || $name == 'Interwetten' || $name=='伟德' || $name=="Pinnacle平博" || $name=="SportingBet (博天堂)" || $name=="立博")
-									{
+									//if($name == '威廉希尔' || $name == 'Interwetten' || $name=='伟德' || $name=="Pinnacle平博" || $name=="SportingBet (博天堂)" || $name=="立博")
+									if(in_array($name, $key_comp))
+                                    {
 										$result = 0;
 										break;
 									}
@@ -175,7 +185,8 @@ function model2($param, $odd, $unfinish)
                                     //if($name == 'Interwetten' || $name == 'Bet365' || $name == '威廉希尔')
                                     //if($name == 'Interwetten')
 									//if($name == '威廉希尔' || $name == 'Interwetten' || $name=='伟德')
-									if($name == '威廉希尔' || $name == 'Interwetten' || $name=='伟德' || $name=="Pinnacle平博")
+									//if($name == '威廉希尔' || $name == 'Interwetten' || $name=='伟德' || $name=="Pinnacle平博")
+                                    if(in_array($name, $key_comp))
                                     {
                                         $num++;
                                         if($num >= 1)
@@ -188,8 +199,11 @@ function model2($param, $odd, $unfinish)
 							}			
                             else
                             {
-                                $bad = 1;
-                                break;
+                                if(in_array($name, $key_comp))
+                                {
+                                    $bad = 1;
+                                    break;
+                                }
                             }
 						}
 						if($result == 0 || $bad == 1)
