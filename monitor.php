@@ -1,26 +1,16 @@
 <?php
-include "/usr/local/zk_agent/names/nameapi.php";
-$REDIS_NAME = "all.relatedNews.redis.com";
 $LIST_KEY_PREFIX = "dan_link_";
 $res_array = array();
 $link="http://m.500.com/info/index.php?c=detail&fid=";
 $redis = NULL;
 
+get_redis_conn() ;
 function get_redis_conn()
 {
     global $redis;
     $redis = new Redis();
-    #$host = _getHostByName($REDIS_NAME);
-    #$ret = $redis->connect($host['host'], $host['port']);
-    $ret = $redis->connect('10.49.127.32', 9081);
+    $ret = $redis->connect('172.16.126.203', 6379);
     return $ret;
-}
-function _getHostByName($zkname){
-    $zkHost = new ZkHost();
-    getHostByKey($zkname, $zkHost);
-    $host['host'] = $zkHost->ip;
-    $host['port'] = $zkHost->port;
-    return $host;
 }
 
 function model2($param, $odd, $unfinish)
@@ -29,9 +19,12 @@ function model2($param, $odd, $unfinish)
 		global $res_array;
 		global $debug;
 		global $debugnum;
-		$score = explode(":",$param['score']);
-		$score[0] = intval($score[0]);
-		$score[1] = intval($score[1]);
+        if($param["score"] != "")
+        {
+            $score = explode(":",$param['score']);
+            $score[0] = intval($score[0]);
+            $score[1] = intval($score[1]);
+        }
         $key_comp = array("香港马会","Coral","易胜博");
 		$my_array = array("威廉希尔","澳门","立博","Bet365","Interwetten","SNAI","伟德","Bwin","Coral","SportingBet (博天堂)","香港马会","易胜博");
 		$all = array();
@@ -39,6 +32,12 @@ function model2($param, $odd, $unfinish)
 		$avg['end'] = array();
 		$jingcai = array();
 		$count=0;
+        $avg['first']['win'] = 0;
+        $avg['end']['win'] = 0;
+        $avg['first']['draw'] = 0;
+        $avg['end']['draw'] = 0;
+        $avg['first']['lost'] = 0;
+        $avg['end']['lost'] = 0;
 		foreach($odd as $m)
 		{
 				if(in_array($m['name'], $my_array))
@@ -69,7 +68,6 @@ function model2($param, $odd, $unfinish)
 		$avg['end']['draw'] /= $count;
 		$avg['first']['lost'] /= $count;
 		$avg['end']['lost'] /= $count;
-		//var_dump($avg);
 		$type = $avg['first']['win'] < $avg['first']['lost']? 'homelow':'awaylow';
 
 		if($debug==1 && $param['num'] == $debugnum)
@@ -303,7 +301,7 @@ function Obser($date, &$good_array, &$bad_array, $unfinish, &$total)
 				//$url = $oupei."560756";
 				if($debug==1 && $num[1][0] != $debugnum)
 				{
-						continue;
+					continue;
 				}
 
 				//var_dump($url);
@@ -315,7 +313,7 @@ function Obser($date, &$good_array, &$bad_array, $unfinish, &$total)
 				$tmp = curl_get_contents($url);
 				//var_dump($tmp);
 				preg_match('/d-game-time\"\>(\d+\&nbsp;:\&nbsp;\d+)</', $tmp, $out, PREG_OFFSET_CAPTURE);
-				$param['score'] = str_replace("&nbsp;", "", $out[1][0]);
+                $param['score'] = str_replace("&nbsp;", "", $out[1][0]);
                 if($param['score'] != "")
                     continue;
 				$param['num'] = $num[1][0];
@@ -373,6 +371,7 @@ while($start >= $end)
 		Obser($start, $good_array, $bad_array, $unfinish, $total);
 		$start--;
 }
+$str_mail = '';
 /*
 echo "\n#####################model1:\n";
 echo "bad\n";
@@ -414,21 +413,24 @@ $str_mail = $str_mail."model2 good:\n".str_replace('\\', '', json_encode($good_a
 $str_mail = $str_mail."model3 bad:\n".str_replace('\\', '', json_encode($bad_array[3]))."\n";
 $str_mail = $str_mail."model3 good:\n".str_replace('\\', '', json_encode($good_array[3]))."\n";
 */
+
 if( !get_redis_conn() )
 {
     $str_mail = $str_mail."connect redis failed!\n";
 }
+
 var_dump(count($res_array['model2']));
+
 foreach($res_array['model2'] as $k=>$tmp)
 {
     $num = substr($tmp,-6,6);
     $ret = NULL;
-    $ret = $redis->get(LIST_KEY_PREFIX.$num);
+    $ret = $redis->get($LIST_KEY_PREFIX.$num);
     echo "redis get: ";
     var_dump($ret);
     if($ret == false)
     {
-        $ret = $redis->setex(LIST_KEY_PREFIX.$num, 3600, json_encode($tmp));
+        $ret = $redis->setex($LIST_KEY_PREFIX.$num, 3600, json_encode($tmp));
         echo "redis setex return: ";
         var_dump($ret);
     }
@@ -437,6 +439,7 @@ foreach($res_array['model2'] as $k=>$tmp)
         unset($res_array['model2'][$k]);
     }
 }
+
 if(count($res_array['model2'])<1)
 {
     echo "no new aid\n";
@@ -444,7 +447,7 @@ if(count($res_array['model2'])<1)
 }
 $str_mail = $str_mail."result:\n".str_replace('\\', '', json_encode($res_array))."\n";
 $str_mail = $str_mail."curl_error:\n".str_replace('\\', '', json_encode($curlError))."\n";
-//$ret = mail('xiesicong@baidu.com,241092598@qq.com', 'result', $str_mail);
-//var_dump($ret);
-system("/usr/local/tips_agent2.0/sendalarm -s sc_load_status -m '$str_mail'");
+$ret = mail('241092598@qq.com', count($res_array['model2']), $str_mail);
+var_dump($ret);
+#system("/usr/local/tips_agent2.0/sendalarm -s sc_load_status -m '$str_mail'");
 
